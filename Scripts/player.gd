@@ -8,7 +8,7 @@ var current_face: String = "down"
 @export_group("Movement")
 @export var ACCELERATION: float = 800.0
 @export var FRICTION: float = 1000.0
-@export var SPEED: float = 100.0
+@export var SPEED: float = 80.0
 
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
 
@@ -28,31 +28,25 @@ func _movement_handle(delta: float) -> void:
 
 
 func _update_face() -> void:
-	if velocity.x > 0:
-		current_face = "right"
-	elif velocity.x < 0:
-		current_face = "left"
-	if velocity.y > 0:
-		current_face = "down"
-	if velocity.y < 0:
-		current_face = "up"
+	if velocity.length() < 0.1:
+		return
+	if abs(velocity.x) > abs(velocity.y):
+		current_face = "right" if velocity.x > 0 else "left"
+	else:
+		current_face = "down" if velocity.y > 0 else "up"
 
 
 func _state_manager() -> void:
 	_update_face()
-	if abs(velocity.x) > 0.1:
+	if velocity.length() > 5.0: 
 		state = State.walk
 	else:
 		state = State.idle
 
 
 func _animation_manager() -> void:
-	var new_anim := ""
-	match state:
-		State.idle:
-			new_anim = "idle"
-		State.walk:
-			new_anim = "walk"
-
-	if anim.animation != new_anim:
-		anim.play(new_anim + "_" + current_face)
+	var base_name = "walk" if state == State.walk else "idle"
+	var full_anim_name = base_name + "_" + current_face
+	
+	if anim.animation != full_anim_name:
+		anim.play(full_anim_name)
