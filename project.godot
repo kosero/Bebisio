@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="Bebisio"
+run/main_scene="uid://c35x0d44i1dov"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+CookieCounter="*uid://bxytre2r11hl2"
 
 [display]
 

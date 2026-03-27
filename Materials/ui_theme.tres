@@ -2,6 +2,28 @@
 
 [ext_resource type="FontFile" uid="uid://bj8l2xgrvrqoa" path="res://Textures/Chewy-Regular.ttf" id="1_omjdi"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddeb4"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.12941177, 0.14509805, 0.15686275, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_56aqh"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.078431375, 0.12156863, 0.14509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4plma"]
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -16,6 +38,10 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [resource]
+Button/font_sizes/font_size = 48
+Button/styles/hover = SubResource("StyleBoxFlat_ddeb4")
+Button/styles/normal = SubResource("StyleBoxFlat_56aqh")
+Button/styles/pressed = SubResource("StyleBoxFlat_56aqh")
 Label/font_sizes/font_size = 32
 Label/fonts/font = ExtResource("1_omjdi")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_4plma")
