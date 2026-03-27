@@ -38,7 +38,7 @@ func _update_face() -> void:
 
 func _state_manager() -> void:
 	_update_face()
-	if velocity.length() > 5.0: 
+	if velocity.length() > 5.0:
 		state = State.walk
 	else:
 		state = State.idle
@@ -47,6 +47,6 @@ func _state_manager() -> void:
 func _animation_manager() -> void:
 	var base_name = "walk" if state == State.walk else "idle"
 	var full_anim_name = base_name + "_" + current_face
-	
+
 	if anim.animation != full_anim_name:
 		anim.play(full_anim_name)
