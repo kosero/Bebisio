@@ -1,0 +1,22 @@
+[gd_resource type="Theme" format=3 uid="uid://bon60kncnflmp"]
+
+[ext_resource type="FontFile" uid="uid://bj8l2xgrvrqoa" path="res://Textures/Chewy-Regular.ttf" id="1_omjdi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4plma"]
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omjdi"]
+bg_color = Color(9.62615e-07, 0.7249889, 0.21570772, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[resource]
+Label/font_sizes/font_size = 32
+Label/fonts/font = ExtResource("1_omjdi")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_4plma")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_omjdi")
