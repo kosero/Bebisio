@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://d4l6e160h4igp" path="res://Scripts/Player/hud.gd" id="4_hck1p"]
 [ext_resource type="Script" uid="uid://cay7his34tk88" path="res://Scripts/Player/gun.gd" id="5_knrd4"]
 [ext_resource type="PackedScene" uid="uid://cnhoqlq275j4s" path="res://Prefabs/bullet.tscn" id="7_juxdh"]
+[ext_resource type="AudioStream" uid="uid://43kw4oejdqag" path="res://Sounds/Lazer.wav" id="8_4qbli"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_hck1p"]
 polygon = PackedVector2Array(2, 8, 4, 5, -4, 5, -2, 8)
@@ -22,6 +23,9 @@ width = 128
 height = 128
 fill = 1
 fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4qbli"]
+radius = 60.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5wxv7"]
 radius = 6.0
@@ -204,6 +208,12 @@ shadow_filter = 1
 shadow_filter_smooth = 3.0
 texture = SubResource("GradientTexture2D_y5hcb")
 
+[node name="ShapeCast2D" type="ShapeCast2D" parent="." unique_id=333052692]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_4qbli")
+target_position = Vector2(0, 0)
+collide_with_areas = true
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1202312442]
 position = Vector2(0, 2)
 shape = SubResource("CircleShape2D_5wxv7")
@@ -295,11 +305,15 @@ color = Color(0.49354547, 0.49354553, 0.49354553, 1)
 
 [node name="Gun" type="Sprite2D" parent="." unique_id=482038350]
 z_index = 6
-position = Vector2(-10.38039, -6.020589)
-rotation = -2.6160116
+position = Vector2(11.830997, -2.006858)
+rotation = -0.16802773
 texture = ExtResource("4_2nftw")
-flip_v = true
 script = ExtResource("5_knrd4")
 bullet = ExtResource("7_juxdh")
+
+[node name="BulletSound" type="AudioStreamPlayer" parent="Gun" unique_id=1605617565]
+unique_name_in_owner = true
+stream = ExtResource("8_4qbli")
+volume_db = -15.0
 
 [node name="AudioListener2D" type="AudioListener2D" parent="." unique_id=518212693]

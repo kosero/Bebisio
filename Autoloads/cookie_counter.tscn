@@ -6,7 +6,7 @@
 [node name="CookieCounter" type="Node" unique_id=101812541]
 script = ExtResource("1_sy80s")
 
-[node name="HamSound" type="AudioStreamPlayer2D" parent="." unique_id=1028921494]
+[node name="HamSound" type="AudioStreamPlayer" parent="." unique_id=1610016844]
 unique_name_in_owner = true
 stream = ExtResource("2_umy77")
 volume_db = -15.0

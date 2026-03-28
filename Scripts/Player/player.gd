@@ -11,8 +11,11 @@ var current_face: String = "down"
 @export var SPEED: float = 80.0
 
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
+@onready var shape: ShapeCast2D = %ShapeCast2D
+
 
 func _physics_process(delta: float) -> void:
+	_raycast_handle()
 	_movement_handle(delta)
 	_state_manager()
 	_animation_manager()
@@ -50,3 +53,25 @@ func _animation_manager() -> void:
 
 	if anim.animation != full_anim_name:
 		anim.play(full_anim_name)
+
+
+func _raycast_handle() -> void:
+	if shape.is_colliding():
+		for i in shape.get_collision_count():
+			var body = shape.get_collider(i)
+			if body == null or body.is_in_group("wall"):
+				continue
+
+			var space = get_world_2d().direct_space_state
+			var query = PhysicsRayQueryParameters2D.create(
+				global_position,
+				body.global_position
+			)
+			query.exclude = [self]
+			query.collision_mask = 1
+
+			var result = space.intersect_ray(query)
+			if not result:
+				body.visible = true
+			else:
+				body.visible = false

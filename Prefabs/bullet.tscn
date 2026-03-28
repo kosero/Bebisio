@@ -5,14 +5,26 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7dga7"]
 size = Vector2(2, 1)
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0oen4"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+
 [node name="Bullet" type="Area2D" unique_id=41924042 groups=["bullet"]]
 script = ExtResource("1_0oen4")
-
-[node name="ColorRect" type="ColorRect" parent="." unique_id=649779378]
-offset_right = 2.0
-offset_bottom = 1.0
-color = Color(0.6509804, 0.53333336, 0.2901961, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=904877272]
 position = Vector2(1, 0.5)
 shape = SubResource("RectangleShape2D_7dga7")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=649779378]
+offset_right = 2.0
+offset_bottom = 1.0
+color = Color(0.30588236, 0.45490196, 0.6, 1)
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=132631745]
+modulate = Color(0.5294118, 0.61960787, 0.6392157, 1)
+position = Vector2(-0.615, 0.5)
+lifetime = 0.5
+use_fixed_seed = true
+seed = 3880429314
+process_material = SubResource("ParticleProcessMaterial_0oen4")

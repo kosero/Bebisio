@@ -1,7 +1,7 @@
 extends Node
 
 
-@onready var ham_sound: AudioStreamPlayer2D = %HamSound
+@onready var ham_sound: AudioStreamPlayer = %HamSound
 
 var counter: int = 0
 

@@ -4,6 +4,8 @@ extends Sprite2D
 @export var radius: float = 12.0
 @export var bullet: PackedScene
 
+@onready var bullet_sound: AudioStreamPlayer = %BulletSound
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("shoot"):
 		_shoot()
@@ -22,3 +24,5 @@ func _shoot() -> void:
 	get_parent().add_child(b)
 	b.global_position = global_position
 	b.rotation = rotation
+	if !bullet_sound.playing:
+		bullet_sound.play()
