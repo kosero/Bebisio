@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://we5nyex4g767" path="res://Textures/gun.png" id="4_2nftw"]
 [ext_resource type="Script" uid="uid://d4l6e160h4igp" path="res://Scripts/Player/hud.gd" id="4_hck1p"]
 [ext_resource type="Script" uid="uid://cay7his34tk88" path="res://Scripts/Player/gun.gd" id="5_knrd4"]
+[ext_resource type="PackedScene" uid="uid://cnhoqlq275j4s" path="res://Prefabs/bullet.tscn" id="7_juxdh"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_hck1p"]
 polygon = PackedVector2Array(2, 8, 4, 5, -4, 5, -2, 8)
@@ -187,7 +188,7 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[node name="Player" type="CharacterBody2D" unique_id=1933084700]
+[node name="Player" type="CharacterBody2D" unique_id=1933084700 groups=["player"]]
 z_index = 3
 script = ExtResource("1_5wxv7")
 
@@ -294,10 +295,11 @@ color = Color(0.49354547, 0.49354553, 0.49354553, 1)
 
 [node name="Gun" type="Sprite2D" parent="." unique_id=482038350]
 z_index = 6
-position = Vector2(-11.275564, -4.1062937)
-rotation = -2.7923448
+position = Vector2(-10.38039, -6.020589)
+rotation = -2.6160116
 texture = ExtResource("4_2nftw")
 flip_v = true
 script = ExtResource("5_knrd4")
+bullet = ExtResource("7_juxdh")
 
 [node name="AudioListener2D" type="AudioListener2D" parent="." unique_id=518212693]
