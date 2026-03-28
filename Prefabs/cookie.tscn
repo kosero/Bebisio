@@ -2,21 +2,10 @@
 
 [ext_resource type="Texture2D" uid="uid://gox64oayxosf" path="res://Textures/cookie.png" id="1_6y8ig"]
 [ext_resource type="Script" uid="uid://co0qwoejb8s03" path="res://Scripts/cookie.gd" id="1_a5i50"]
+[ext_resource type="Texture2D" uid="uid://bexfm0yi1r5qd" path="res://Materials/light_tex.tres" id="3_x8iv8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6y8ig"]
 radius = 3.0
-
-[sub_resource type="Gradient" id="Gradient_5wxv7"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.35159817, 0.6803653)
-colors = PackedColorArray(1, 1, 1, 1, 0.2665752, 0.26657522, 0.26657507, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_y5hcb"]
-gradient = SubResource("Gradient_5wxv7")
-width = 128
-height = 128
-fill = 1
-fill_from = Vector2(0.5, 0.5)
 
 [node name="Cookie" type="Area2D" unique_id=329422708 groups=["cookie"]]
 script = ExtResource("1_a5i50")
@@ -32,6 +21,6 @@ color = Color(1, 0.42745098, 0.30588236, 1)
 energy = 1.5
 shadow_enabled = true
 shadow_item_cull_mask = 3
-texture = SubResource("GradientTexture2D_y5hcb")
+texture = ExtResource("3_x8iv8")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

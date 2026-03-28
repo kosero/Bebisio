@@ -19,10 +19,10 @@ shape = SubResource("RectangleShape2D_7dga7")
 [node name="ColorRect" type="ColorRect" parent="." unique_id=649779378]
 offset_right = 2.0
 offset_bottom = 1.0
-color = Color(0.30588236, 0.45490196, 0.6, 1)
+color = Color(0.8901961, 0.8666667, 0.81960785, 1)
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=132631745]
-modulate = Color(0.5294118, 0.61960787, 0.6392157, 1)
+modulate = Color(0.8901961, 0.8666667, 0.81960785, 1)
 position = Vector2(-0.615, 0.5)
 lifetime = 0.5
 use_fixed_seed = true

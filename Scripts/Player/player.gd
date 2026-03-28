@@ -12,7 +12,7 @@ var current_face: String = "down"
 
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
 @onready var shape: ShapeCast2D = %ShapeCast2D
-
+@onready var gun: Sprite2D = %Gun
 
 func _physics_process(delta: float) -> void:
 	_raycast_handle()
@@ -75,3 +75,7 @@ func _raycast_handle() -> void:
 				body.visible = true
 			else:
 				body.visible = false
+
+
+func take_ammo(amout: int) -> void:
+	gun.amout = amout
