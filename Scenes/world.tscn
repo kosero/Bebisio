@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://yysfcuio22fs" path="res://Prefabs/player.tscn" id="1_a02cp"]
 [ext_resource type="TileSet" uid="uid://ba4wpv81vehem" path="res://Materials/dungeon_sheet.tres" id="1_go701"]
+[ext_resource type="PackedScene" uid="uid://dy2of5yffw6o1" path="res://Prefabs/milk.tscn" id="3_5a7ea"]
 
 [node name="World" type="Node2D" unique_id=1393002764]
 
@@ -19,3 +20,15 @@ tile_set = ExtResource("1_go701")
 [node name="Player" parent="." unique_id=1933084700 instance=ExtResource("1_a02cp")]
 z_index = 1
 position = Vector2(263, 166)
+
+[node name="Milk" parent="." unique_id=672416622 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(162, 137)
+
+[node name="Milk2" parent="." unique_id=170592287 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(198, 99)
+
+[node name="Milk3" parent="." unique_id=1782016915 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(193, 126)

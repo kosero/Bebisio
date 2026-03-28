@@ -14,6 +14,8 @@ var current_face: String = "down"
 @onready var shape: ShapeCast2D = %ShapeCast2D
 @onready var gun: Sprite2D = %Gun
 
+var previous_colliders: Array = []
+
 func _physics_process(delta: float) -> void:
 	_raycast_handle()
 	_movement_handle(delta)
@@ -56,11 +58,15 @@ func _animation_manager() -> void:
 
 
 func _raycast_handle() -> void:
+	var current_colliders: Array = []
+
 	if shape.is_colliding():
 		for i in shape.get_collision_count():
 			var body = shape.get_collider(i)
-			if body == null or body.is_in_group("wall"):
+			if body == null or body.is_in_group("wall") or body == self:
 				continue
+
+			current_colliders.append(body)
 
 			var space = get_world_2d().direct_space_state
 			var query = PhysicsRayQueryParameters2D.create(
@@ -71,11 +77,17 @@ func _raycast_handle() -> void:
 			query.collision_mask = 1
 
 			var result = space.intersect_ray(query)
-			if not result:
+
+			if not result or result.collider == body:
 				body.visible = true
 			else:
 				body.visible = false
 
+	for body in previous_colliders:
+		if not current_colliders.has(body) and is_instance_valid(body):
+			body.visible = false
+	previous_colliders = current_colliders
+
 
 func take_ammo(amout: int) -> void:
-	gun.amout = amout
+	gun.amout += amout
