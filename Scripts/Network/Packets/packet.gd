@@ -1,6 +1,10 @@
 class_name Packet
 
 const POSITION: int = 0x01
+const JOIN: int = 0x02
+
+const WELCOME: int = 0x10
+const GOODBYE: int = 0x11
 
 var type: int
 

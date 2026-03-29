@@ -1,24 +1,29 @@
 class_name PositionPacket extends Packet
 
+var peer_id: int
 var x: float
 var y: float
 
 
-func _init(_x: float, _y: float) -> void:
+func _init(_x: float, _y: float, _peer_id: int = 0) -> void:
 	type = Packet.POSITION
 	x = _x
 	y = _y
+	peer_id = _peer_id
 
 
 func serialize() -> PackedByteArray:
 	var buf = PackedByteArray()
-	buf.append(type)
-	buf.append_array(var_to_bytes(x))
-	buf.append_array(var_to_bytes(y))
+	buf.resize(13) # 1 (type) + 4 (peer_id) + 4 (x) + 4 (y)
+	buf[0] = type
+	buf.encode_u32(1, peer_id)
+	buf.encode_float(5, x)
+	buf.encode_float(9, y)
 	return buf
 
 
 static func deserialize(data: PackedByteArray) -> PositionPacket:
-	var _x = bytes_to_var(data.slice(1, 5))
-	var _y = bytes_to_var(data.slice(5, 9))
-	return PositionPacket.new(_x, _y)
+	var _peer_id = data.decode_u32(1)
+	var _x = data.decode_float(5)
+	var _y = data.decode_float(9)
+	return PositionPacket.new(_x, _y, _peer_id)

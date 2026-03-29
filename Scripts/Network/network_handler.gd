@@ -3,6 +3,8 @@ extends Node
 signal packet_received(data: PackedByteArray)
 
 var ws: WebSocketPeer
+var client_id: int = -1
+var is_mine: bool = false
 
 const WEBSOCKET_URL: String = "ws://localhost:8965"
 const RECONNECT_INTERVAL: float = 2.0
