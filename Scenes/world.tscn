@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://yysfcuio22fs" path="res://Prefabs/player.tscn" id="1_a02cp"]
 [ext_resource type="TileSet" uid="uid://ba4wpv81vehem" path="res://Materials/dungeon_sheet.tres" id="1_go701"]
 [ext_resource type="PackedScene" uid="uid://dy2of5yffw6o1" path="res://Prefabs/milk.tscn" id="3_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://mmfs5dmwludk" path="res://Prefabs/cookie.tscn" id="4_8j60k"]
 
 [node name="World" type="Node2D" unique_id=1393002764]
 
@@ -23,12 +24,52 @@ position = Vector2(263, 166)
 
 [node name="Milk" parent="." unique_id=672416622 instance=ExtResource("3_5a7ea")]
 visible = false
-position = Vector2(162, 137)
+position = Vector2(130, 460)
 
-[node name="Milk2" parent="." unique_id=170592287 instance=ExtResource("3_5a7ea")]
+[node name="Cookie" parent="." unique_id=329422708 instance=ExtResource("4_8j60k")]
 visible = false
-position = Vector2(198, 99)
+position = Vector2(33, 437)
 
-[node name="Milk3" parent="." unique_id=1782016915 instance=ExtResource("3_5a7ea")]
+[node name="Milk2" parent="." unique_id=666291007 instance=ExtResource("3_5a7ea")]
 visible = false
-position = Vector2(193, 126)
+position = Vector2(96, 391)
+
+[node name="Cookie2" parent="." unique_id=129388348 instance=ExtResource("4_8j60k")]
+visible = false
+position = Vector2(164, 398)
+
+[node name="Cookie3" parent="." unique_id=111598417 instance=ExtResource("4_8j60k")]
+visible = false
+position = Vector2(84, 330)
+
+[node name="Cookie4" parent="." unique_id=1546534044 instance=ExtResource("4_8j60k")]
+visible = false
+position = Vector2(190, 312)
+
+[node name="Milk3" parent="." unique_id=589703098 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(347, 314)
+
+[node name="Cookie5" parent="." unique_id=312818462 instance=ExtResource("4_8j60k")]
+visible = false
+position = Vector2(253, 484)
+
+[node name="Milk4" parent="." unique_id=2109073051 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(372, 472)
+
+[node name="Milk5" parent="." unique_id=2016616178 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(429, 374)
+
+[node name="Cookie6" parent="." unique_id=569737366 instance=ExtResource("4_8j60k")]
+visible = false
+position = Vector2(430, 519)
+
+[node name="Milk6" parent="." unique_id=938724132 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(361, 386)
+
+[node name="Milk7" parent="." unique_id=1811529903 instance=ExtResource("3_5a7ea")]
+visible = false
+position = Vector2(265, 294)

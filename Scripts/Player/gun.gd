@@ -2,7 +2,8 @@ extends Sprite2D
 
 @export var radius: float = 12.0
 @export var bullet: PackedScene
-@export_range(1, 12) var amout: int = 12
+@export_range(1, 12) var amout: int = 0
+@export_range(1, 12) var amout_max: int = 12
 
 @onready var bullet_sound: AudioStreamPlayer = %BulletSound
 
@@ -18,6 +19,7 @@ func _process(_delta: float) -> void:
 	rotation = angle
 	flip_v = mouse_pos.x < 0
 	Global.ammo = amout
+	amout = clamp(amout, 0, amout_max)
 
 
 func _shoot() -> void:
