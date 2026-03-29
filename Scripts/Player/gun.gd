@@ -8,11 +8,17 @@ extends Sprite2D
 @onready var bullet_sound: AudioStreamPlayer = %BulletSound
 
 func _input(event: InputEvent) -> void:
+	if not NetworkHandler.is_mine:
+		return
+
 	if event.is_action_pressed("shoot"):
 		_shoot()
 
 
 func _process(_delta: float) -> void:
+	if not NetworkHandler.is_mine:
+		return
+
 	var mouse_pos: Vector2 = get_parent().get_local_mouse_position()
 	var angle = mouse_pos.angle()
 	position = Vector2.from_angle(angle) * radius

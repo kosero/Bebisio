@@ -17,10 +17,11 @@ var current_face: String = "down"
 var previous_colliders: Array = []
 
 func _physics_process(delta: float) -> void:
-	_raycast_handle()
-	_movement_handle(delta)
-	_state_manager()
-	_animation_manager()
+	if NetworkHandler.is_mine:
+		_raycast_handle()
+		_movement_handle(delta)
+		_state_manager()
+		_animation_manager()
 	move_and_slide()
 
 
