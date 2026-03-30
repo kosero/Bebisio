@@ -308,3 +308,13 @@ stream = ExtResource("8_4qbli")
 volume_db = -15.0
 
 [node name="AudioListener2D" type="AudioListener2D" parent="." unique_id=518212693]
+
+[node name="Username" type="Label" parent="." unique_id=2097224627]
+unique_name_in_owner = true
+offset_left = -37.0
+offset_top = -14.0
+offset_right = 37.0
+offset_bottom = -2.0
+theme_override_font_sizes/font_size = 8
+text = "TEST"
+horizontal_alignment = 1

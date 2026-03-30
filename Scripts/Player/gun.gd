@@ -12,7 +12,7 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if event.is_action_pressed("shoot"):
-		_shoot()
+		shoot()
 
 
 func _process(_delta: float) -> void:
@@ -28,7 +28,7 @@ func _process(_delta: float) -> void:
 	amout = clamp(amout, 0, amout_max)
 
 
-func _shoot() -> void:
+func shoot() -> void:
 	if amout > 0:
 		var b = bullet.instantiate()
 		get_parent().add_child(b)

@@ -2,6 +2,9 @@ class_name Packet
 
 const POSITION: int = 0x01
 const JOIN: int = 0x02
+const TAKE_COOKIE: int = 0x03
+const TAKE_AMMO: int = 0x04
+const SHOOT: int = 0x05
 
 const WELCOME: int = 0x10
 const GOODBYE: int = 0x11

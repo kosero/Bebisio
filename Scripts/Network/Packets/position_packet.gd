@@ -14,7 +14,7 @@ func _init(_x: float, _y: float, _peer_id: int = 0) -> void:
 
 func serialize() -> PackedByteArray:
 	var buf = PackedByteArray()
-	buf.resize(13) # 1 (type) + 4 (peer_id) + 4 (x) + 4 (y)
+	buf.resize(13)
 	buf[0] = type
 	buf.encode_u32(1, peer_id)
 	buf.encode_float(5, x)

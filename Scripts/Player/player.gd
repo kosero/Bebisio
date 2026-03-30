@@ -13,6 +13,7 @@ var current_face: String = "down"
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
 @onready var shape: ShapeCast2D = %ShapeCast2D
 @onready var gun: Sprite2D = %Gun
+@onready var username: Label = %Username
 
 var previous_colliders: Array = []
 
