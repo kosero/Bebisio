@@ -12,6 +12,7 @@ func _init(_peer_id: int) -> void:
 func serialize() -> PackedByteArray:
 	var buf := PackedByteArray()
 	buf.resize(1 + 4)
+	buf[0] = type
 	buf.encode_u32(1, peer_id)
 	return buf
 

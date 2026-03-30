@@ -5,25 +5,68 @@ enum State { idle, walk }
 @export var state: State = State.idle
 var current_face: String = "down"
 
+@export_group("Network")
+var peer_id: int = -1
+var is_local_player: bool = false
+var target_position: Vector2 = Vector2.ZERO
+var interpolation_speed: float = 15.0
+
 @export_group("Movement")
 @export var ACCELERATION: float = 800.0
 @export var FRICTION: float = 1000.0
 @export var SPEED: float = 80.0
 
+@export var username: String = ""
+
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
 @onready var shape: ShapeCast2D = %ShapeCast2D
 @onready var gun: Sprite2D = %Gun
-@onready var username: Label = %Username
+@onready var username_label: Label = %Username
 
 var previous_colliders: Array = []
+var last_sent_position: Vector2 = Vector2.ZERO
+var position_send_timer: float = 0.0
+const POSITION_SEND_INTERVAL: float = 0.05 # 20 Hz
+
+func _ready() -> void:
+	target_position = global_position
+	username_label.text = username
+
 
 func _physics_process(delta: float) -> void:
-	if NetworkHandler.is_mine:
+	if is_local_player:
 		_raycast_handle()
 		_movement_handle(delta)
 		_state_manager()
 		_animation_manager()
-	move_and_slide()
+		move_and_slide()
+		_send_position_to_server(delta)
+	else:
+		_interpolate_remote_player(delta)
+
+
+func _interpolate_remote_player(delta: float) -> void:
+	global_position = global_position.lerp(target_position, interpolation_speed * delta)
+
+	var movement_delta = target_position - global_position
+	if movement_delta.length() > 0.1:
+		state = State.walk
+		velocity = movement_delta # Used by _update_face
+	else:
+		state = State.idle
+
+	_update_face()
+	_animation_manager()
+
+
+func _send_position_to_server(delta: float) -> void:
+	position_send_timer += delta
+	if position_send_timer >= POSITION_SEND_INTERVAL:
+		if global_position.distance_to(last_sent_position) > 0.1:
+			var p = PositionPacket.new(global_position.x, global_position.y, peer_id)
+			NetworkHandler.send_packet(p)
+			last_sent_position = global_position
+		position_send_timer = 0.0
 
 
 func _movement_handle(delta: float) -> void:
@@ -91,5 +134,5 @@ func _raycast_handle() -> void:
 	previous_colliders = current_colliders
 
 
-func take_ammo(amout: int) -> void:
-	gun.amout += amout
+func take_ammo(amount: int) -> void:
+	gun.amount += amount

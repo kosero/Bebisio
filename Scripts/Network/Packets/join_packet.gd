@@ -17,7 +17,8 @@ func serialize() -> PackedByteArray:
 	buf[0] = type
 	buf.encode_u32(1, peer_id)
 	buf.encode_u32(5, name_bytes.size())
-	buf.append_array(name_bytes)
+	for i in name_bytes.size():
+		buf[9 + i] = name_bytes[i]
 	return buf
 
 

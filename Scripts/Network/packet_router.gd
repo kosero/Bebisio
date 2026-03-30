@@ -36,7 +36,6 @@ func _on_packet_received(data: PackedByteArray) -> void:
 func _welcome_packet_handle(data: PackedByteArray) -> void:
 	var p = WelcomePacket.deserialize(data)
 	NetworkHandler.client_id = p.client_id
-	NetworkHandler.is_mine = true
 	print_debug("ID assigned: ", p.client_id)
 
 
@@ -54,15 +53,17 @@ func _join_packet_handle(data: PackedByteArray) -> void:
 
 func _position_packet_handle(data: PackedByteArray) -> void:
 	var p = PositionPacket.deserialize(data)
+
+	if p.peer_id == NetworkHandler.client_id:
+		return
+
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
-		player.global_position = Vector2(p.x, p.y)
+		player.target_position = Vector2(p.x, p.y)
 
 
 func _take_cookie_packet_handle(data: PackedByteArray) -> void:
 	var p = TakeCookiePacket.deserialize(data)
-	var _player = _get_player_with_peer_id(p.peer_id)
-
 	# TODO: Embed cookie counter inside player
 
 
@@ -75,10 +76,13 @@ func _take_ammo_packet_handle(data: PackedByteArray) -> void:
 
 func _shoot_packet_handle(data: PackedByteArray) -> void:
 	var p = ShootPacket.deserialize(data)
+
+	if p.peer_id == NetworkHandler.client_id:
+		return
+
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
 		player.gun.shoot()
-
 
 
 func _get_player_with_peer_id(peer_id: int) -> Node:

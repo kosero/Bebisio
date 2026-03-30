@@ -7,8 +7,10 @@ func _ready() -> void:
 	PacketRouter.player_spawn.connect(_on_player_spawn)
 
 
-func _on_player_spawn(_name: String, peer_id: int) -> void:
+func _on_player_spawn(_name: String, _peer_id: int) -> void:
 	var player = PLAYER.instantiate()
 	player.username = _name
-	player.name = str(peer_id)
+	player.peer_id = _peer_id
+	player.is_local_player = (_peer_id == NetworkHandler.client_id)
+	player.name = str(_peer_id)
 	call_deferred("add_child", player)

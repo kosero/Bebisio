@@ -2,21 +2,23 @@ extends Sprite2D
 
 @export var radius: float = 12.0
 @export var bullet: PackedScene
-@export_range(1, 12) var amout: int = 0
-@export_range(1, 12) var amout_max: int = 12
+@export_range(1, 12) var amount: int = 0
+@export_range(1, 12) var amount_max: int = 12
 
 @onready var bullet_sound: AudioStreamPlayer = %BulletSound
 
 func _input(event: InputEvent) -> void:
-	if not NetworkHandler.is_mine:
+	if not get_parent().is_local_player:
 		return
 
 	if event.is_action_pressed("shoot"):
 		shoot()
+		var p = ShootPacket.new(get_parent().peer_id)
+		NetworkHandler.send_packet(p)
 
 
 func _process(_delta: float) -> void:
-	if not NetworkHandler.is_mine:
+	if not get_parent().is_local_player:
 		return
 
 	var mouse_pos: Vector2 = get_parent().get_local_mouse_position()
@@ -24,16 +26,16 @@ func _process(_delta: float) -> void:
 	position = Vector2.from_angle(angle) * radius
 	rotation = angle
 	flip_v = mouse_pos.x < 0
-	Global.ammo = amout
-	amout = clamp(amout, 0, amout_max)
+	Global.ammo = amount
+	amount = clamp(amount, 0, amount_max)
 
 
 func shoot() -> void:
-	if amout > 0:
+	if amount > 0:
 		var b = bullet.instantiate()
 		get_parent().add_child(b)
 		b.global_position = global_position
 		b.rotation = rotation
 		if !bullet_sound.playing:
 			bullet_sound.play()
-		amout -= 1
+		amount -= 1

@@ -4,7 +4,6 @@ signal packet_received(data: PackedByteArray)
 
 var ws: WebSocketPeer
 var client_id: int = -1
-var is_mine: bool = false
 
 const WEBSOCKET_URL: String = "ws://localhost:8965"
 const RECONNECT_INTERVAL: float = 2.0
@@ -32,6 +31,11 @@ func _handle_incoming_packets() -> void:
 	while ws.get_available_packet_count():
 		var packet = ws.get_packet()
 		packet_received.emit(packet)
+
+
+func send_packet(p: Packet) -> void:
+	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN:
+		ws.put_packet(p.serialize())
 
 
 func _try_reconnect(delta) -> void:
