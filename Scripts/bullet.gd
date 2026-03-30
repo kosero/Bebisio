@@ -11,3 +11,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	position += transform.x * speed * delta
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if body.is_in_group("player") and body.is_local_player:
+		body.take_damage()

@@ -7,5 +7,5 @@ extends Control
 
 
 func _process(_delta: float) -> void:
-	cookie_counter.text = str(CookieCounter.counter)
-	bullet_bar.value = Global.ammo
+	cookie_counter.text = str(get_parent().cookie_counter)
+	bullet_bar.value = get_parent().gun.amount

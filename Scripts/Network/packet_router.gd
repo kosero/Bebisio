@@ -64,14 +64,39 @@ func _position_packet_handle(data: PackedByteArray) -> void:
 
 func _take_cookie_packet_handle(data: PackedByteArray) -> void:
 	var p = TakeCookiePacket.deserialize(data)
-	# TODO: Embed cookie counter inside player
+	
+	var player = _get_player_with_peer_id(p.peer_id)
+	if player:
+		player.take_cookie()
+		
+	var cookie = _get_cookie_with_id(p.cookie_id)
+	if cookie:
+		cookie.queue_free()
+
+
+func _get_cookie_with_id(id: int) -> Node:
+	for cookie in get_tree().get_nodes_in_group("cookie"):
+		if "cookie_id" in cookie and cookie.cookie_id == id:
+			return cookie
+	return null
 
 
 func _take_ammo_packet_handle(data: PackedByteArray) -> void:
 	var p = TakeAmmoPacket.deserialize(data)
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
-		player.take_ammo(p.ammo)
+		player.gun.take_ammo(p.ammo)
+		
+	var milk = _get_milk_with_id(p.item_id)
+	if milk:
+		milk.queue_free()
+
+
+func _get_milk_with_id(id: int) -> Node:
+	for milk in get_tree().get_nodes_in_group("milk"):
+		if "item_id" in milk and milk.item_id == id:
+			return milk
+	return null
 
 
 func _shoot_packet_handle(data: PackedByteArray) -> void:
@@ -86,4 +111,4 @@ func _shoot_packet_handle(data: PackedByteArray) -> void:
 
 
 func _get_player_with_peer_id(peer_id: int) -> Node:
-	return get_tree().get_root().get_node_or_null(str(peer_id))
+	return NetworkHandler.get_player(peer_id)

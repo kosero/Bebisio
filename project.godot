@@ -19,8 +19,6 @@ config/windows_native_icon="uid://02cwkjevtjcw"
 
 [autoload]
 
-CookieCounter="*uid://bxytre2r11hl2"
-Global="*uid://dqa4ckhqoygoj"
 NetworkHandler="*uid://b8i6vdnvvdlk4"
 PacketRouter="*uid://b1vquxjti167t"
 

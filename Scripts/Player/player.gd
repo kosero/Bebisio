@@ -28,6 +28,9 @@ var last_sent_position: Vector2 = Vector2.ZERO
 var position_send_timer: float = 0.0
 const POSITION_SEND_INTERVAL: float = 0.05 # 20 Hz
 
+var cookie_counter: int = 0
+@onready var ham_sound: AudioStreamPlayer2D = %HamSound
+
 func _ready() -> void:
 	target_position = global_position
 	username_label.text = username
@@ -134,5 +137,10 @@ func _raycast_handle() -> void:
 	previous_colliders = current_colliders
 
 
-func take_ammo(amount: int) -> void:
-	gun.amount += amount
+func take_cookie(amount: int = 1) -> void:
+	cookie_counter += amount
+	ham_sound.play()
+
+
+func take_damage() -> void:
+	pass

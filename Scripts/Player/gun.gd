@@ -5,7 +5,7 @@ extends Sprite2D
 @export_range(1, 12) var amount: int = 0
 @export_range(1, 12) var amount_max: int = 12
 
-@onready var bullet_sound: AudioStreamPlayer = %BulletSound
+@onready var bullet_sound: AudioStreamPlayer2D = %BulletSound
 
 func _input(event: InputEvent) -> void:
 	if not get_parent().is_local_player:
@@ -26,7 +26,6 @@ func _process(_delta: float) -> void:
 	position = Vector2.from_angle(angle) * radius
 	rotation = angle
 	flip_v = mouse_pos.x < 0
-	Global.ammo = amount
 	amount = clamp(amount, 0, amount_max)
 
 
@@ -39,3 +38,7 @@ func shoot() -> void:
 		if !bullet_sound.playing:
 			bullet_sound.play()
 		amount -= 1
+
+
+func take_ammo(ammo: int) -> void:
+	amount += ammo

@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://cay7his34tk88" path="res://Scripts/Player/gun.gd" id="5_knrd4"]
 [ext_resource type="PackedScene" uid="uid://cnhoqlq275j4s" path="res://Prefabs/bullet.tscn" id="7_juxdh"]
 [ext_resource type="AudioStream" uid="uid://43kw4oejdqag" path="res://Sounds/Lazer.wav" id="8_4qbli"]
+[ext_resource type="AudioStream" uid="uid://bd5yohyakiat" path="res://Sounds/ham.mp3" id="10_kgmex"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_hck1p"]
 polygon = PackedVector2Array(2, 8, 4, 5, -4, 5, -2, 8)
@@ -222,6 +223,31 @@ limit_smoothed = true
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
 
+[node name="Gun" type="Sprite2D" parent="." unique_id=482038350]
+unique_name_in_owner = true
+z_index = 6
+position = Vector2(11.194206, 4.323165)
+rotation = 0.36855063
+texture = ExtResource("4_2nftw")
+script = ExtResource("5_knrd4")
+bullet = ExtResource("7_juxdh")
+
+[node name="BulletSound" type="AudioStreamPlayer2D" parent="Gun" unique_id=234638563]
+unique_name_in_owner = true
+stream = ExtResource("8_4qbli")
+volume_db = -15.0
+max_distance = 60.0
+
+[node name="Username" type="Label" parent="." unique_id=2097224627]
+unique_name_in_owner = true
+offset_left = -37.0
+offset_top = -14.0
+offset_right = 37.0
+offset_bottom = -2.0
+theme_override_font_sizes/font_size = 8
+text = "TEST"
+horizontal_alignment = 1
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1087468527]
 
 [node name="Hud" type="Control" parent="CanvasLayer" unique_id=1913746537]
@@ -292,29 +318,10 @@ text = "0"
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=564345832]
 color = Color(0.49354547, 0.49354553, 0.49354553, 1)
 
-[node name="Gun" type="Sprite2D" parent="." unique_id=482038350]
-unique_name_in_owner = true
-z_index = 6
-position = Vector2(11.194206, 4.323165)
-rotation = 0.36855063
-texture = ExtResource("4_2nftw")
-script = ExtResource("5_knrd4")
-bullet = ExtResource("7_juxdh")
-amout = null
-
-[node name="BulletSound" type="AudioStreamPlayer" parent="Gun" unique_id=1605617565]
-unique_name_in_owner = true
-stream = ExtResource("8_4qbli")
-volume_db = -15.0
-
 [node name="AudioListener2D" type="AudioListener2D" parent="." unique_id=518212693]
 
-[node name="Username" type="Label" parent="." unique_id=2097224627]
+[node name="HamSound" type="AudioStreamPlayer2D" parent="." unique_id=1145726403]
 unique_name_in_owner = true
-offset_left = -37.0
-offset_top = -14.0
-offset_right = 37.0
-offset_bottom = -2.0
-theme_override_font_sizes/font_size = 8
-text = "TEST"
-horizontal_alignment = 1
+stream = ExtResource("10_kgmex")
+volume_db = -15.0
+max_distance = 60.0
