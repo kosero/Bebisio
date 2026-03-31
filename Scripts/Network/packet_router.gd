@@ -2,7 +2,7 @@ extends Node
 
 
 signal player_spawn(name: String, peer_id: int)
-signal spawn_item(item_type: int, item_id: int, spawner_id: int)
+signal spawn_item(item_type: int, item_id: int, progress: float)
 
 
 func _ready() -> void:
@@ -60,7 +60,7 @@ func _join_packet_handle(data: PackedByteArray) -> void:
 
 func _spawn_item_packet_handle(data: PackedByteArray) -> void:
 	var p = SpawnItemPacket.deserialize(data)
-	spawn_item.emit(p.item_type, p.item_id, p.spawner_id)
+	spawn_item.emit(p.item_type, p.item_id, p.progress)
 
 
 func _position_packet_handle(data: PackedByteArray) -> void:

@@ -11,41 +11,38 @@ var is_local_player: bool = false
 var target_position: Vector2 = Vector2.ZERO
 var interpolation_speed: float = 15.0
 
+var last_sent_position: Vector2 = Vector2.ZERO
+var position_send_timer: float = 0.0
+const POSITION_SEND_INTERVAL: float = 0.05
+
 @export_group("Movement")
 @export var ACCELERATION: float = 800.0
 @export var FRICTION: float = 1000.0
 @export var SPEED: float = 80.0
 
+@export_group("Items")
+var cookie_counter: int = 0
+@onready var ham_sound: AudioStreamPlayer2D = %HamSound
+var health: int = 10
+
 @export var username: String = ""
 
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
-@onready var shape: ShapeCast2D = %ShapeCast2D
 @onready var gun: Sprite2D = %Gun
 @onready var username_label: Label = %Username
-@onready var camera: Camera2D = $Camera2D
-@onready var canvas_layer: CanvasLayer = $CanvasLayer
-@onready var audio_listener: AudioListener2D = $AudioListener2D
-@onready var canvas_modulate: CanvasModulate = $CanvasModulate
-
-
-var previous_colliders: Array = []
-var last_sent_position: Vector2 = Vector2.ZERO
-var position_send_timer: float = 0.0
-const POSITION_SEND_INTERVAL: float = 0.05 # 20 Hz
-
-var cookie_counter: int = 0
-@onready var ham_sound: AudioStreamPlayer2D = %HamSound
-
-var health: int = 10
+@onready var canvas_modulate: CanvasModulate = %CanvasModulate
+@onready var audio_listener: AudioListener2D = %AudioListener2D
+@onready var canvas_layer: CanvasLayer = %CanvasLayer
+@onready var camera: Camera2D = %Camera2D
 
 
 func _ready() -> void:
 	target_position = global_position
 	username_label.text = username
-
+	
 	collision_layer = 2
 	collision_mask = 1
-
+	
 	camera.enabled = is_local_player
 	canvas_layer.visible = is_local_player
 	canvas_modulate.visible = is_local_player
@@ -66,14 +63,12 @@ func _physics_process(delta: float) -> void:
 
 func _interpolate_remote_player(delta: float) -> void:
 	global_position = global_position.lerp(target_position, interpolation_speed * delta)
-
 	var movement_delta = target_position - global_position
 	if movement_delta.length() > 0.1:
 		state = State.walk
 		velocity = movement_delta
 	else:
 		state = State.idle
-
 	_update_face()
 	_animation_manager()
 
@@ -126,6 +121,8 @@ func _animation_manager() -> void:
 
 func take_cookie(amount: int = 1) -> void:
 	cookie_counter += amount
+	health += 2
+	health = clamp(health, 0, 10)
 	ham_sound.play()
 
 
@@ -150,3 +147,22 @@ func respawn() -> void:
 	position = Vector2.ZERO
 	target_position = global_position
 	last_sent_position = global_position
+
+
+func camera_shake(duration: float = 0.5, intensity: float = 4.0) -> void:
+	var elapsed = 0.0
+	
+	while elapsed < duration:
+		await get_tree().process_frame
+		var delta = get_process_delta_time()
+		elapsed += delta
+		
+		var progress = elapsed / duration
+		var current_intensity = intensity * (1.0 - progress)
+		
+		camera.offset = Vector2(
+			randf_range(-current_intensity, current_intensity),
+			randf_range(-current_intensity, current_intensity)
+		)
+	
+	camera.offset = Vector2.ZERO 

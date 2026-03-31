@@ -33,7 +33,7 @@ func NewHub() *Hub {
 }
 
 func (h *Hub) Run() {
-	spawnTicker := time.NewTicker(5 * time.Second)
+	spawnTicker := time.NewTicker(1 * time.Second)
 	defer spawnTicker.Stop()
 
 	for {
@@ -80,24 +80,22 @@ func (h *Hub) spawnItem() {
 		return
 	}
 
-	var freeSpawners []uint32
-	for i := uint32(0); i < 5; i++ {
-		if !h.state.IsSpawnerOccupied(i) {
-			freeSpawners = append(freeSpawners, i)
-		}
-	}
-
-	if len(freeSpawners) == 0 {
+	if h.state.GetItemCount() >= 5 {
 		return
 	}
 
+	lastCollect := h.state.GetLastCollect()
+	if time.Now().Unix() < lastCollect+2 {
+		return
+	}
+
+	progress := rand.Float32()
 	itemType := byte(rand.Intn(2))
 	itemID := h.state.GenerateItemId()
 
-	spawnerID := freeSpawners[rand.Intn(len(freeSpawners))]
-	h.state.RegisterSpawn(itemID, spawnerID, itemType)
+	h.state.RegisterSpawn(itemID, progress, itemType)
 
-	spawnPkt := packet.SerializeSpawnItem(itemType, itemID, spawnerID)
+	spawnPkt := packet.SerializeSpawnItem(itemType, itemID, progress)
 
 	for targetID, client := range h.clients {
 		select {
@@ -112,7 +110,7 @@ func (h *Hub) spawnItem() {
 	if itemType == 1 {
 		itemStr = "Cookie"
 	}
-	log.Printf("Server spawned %s (ID: %d) at Spawner %d\n", itemStr, itemID, spawnerID)
+	log.Printf("Server spawned %s (ID: %d) at Progress %.2f\n", itemStr, itemID, progress)
 }
 
 func (h *Hub) routePacket(msg *BroadcastMessage) {
@@ -141,7 +139,6 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 			isValid = true
 			log.Printf("Player %d joined as %s\n", senderID, name)
 
-			// Sync OTHER players and ALL items to THIS newcomer
 			players, items := h.state.GetWorldState()
 			for _, p := range players {
 				if p.ID != senderID {
@@ -150,7 +147,7 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 				}
 			}
 			for _, item := range items {
-				msg.sender.send <- packet.SerializeSpawnItem(item.Type, item.ID, item.SpawnerID)
+				msg.sender.send <- packet.SerializeSpawnItem(item.Type, item.ID, item.Progress)
 			}
 		}
 
@@ -163,18 +160,21 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 
 	case packet.TAKE_COOKIE:
 		peerID, cookieID, ok := packet.ParseTakeCookie(msg.data)
-		if ok && peerID == senderID && h.state.CanTakeCookie(cookieID) {
+		if ok && peerID == senderID && h.state.CanTakeCookie(senderID, cookieID, 2) {
 			isValid = true
-			log.Printf("Player %d took Cookie %d\n", senderID, cookieID)
+			log.Printf("Player %d took Cookie %d and healed 2\n", senderID, cookieID)
 		} else {
 			log.Printf("Player %d failed to take Cookie %d. Rejected.\n", senderID, cookieID)
 		}
 
 	case packet.TAKE_AMMO:
-		peerID, milkID, ammoAmount, ok := packet.ParseTakeAmmo(msg.data)
-		if ok && peerID == senderID && h.state.CanTakeAmmo(senderID, milkID, ammoAmount) {
+		// Always give 12 ammo
+		peerID, milkID, _, ok := packet.ParseTakeAmmo(msg.data)
+		if ok && peerID == senderID && h.state.CanTakeAmmo(senderID, milkID, 0) {
 			isValid = true
-			log.Printf("Player %d took %d ammo from Milk %d\n", senderID, ammoAmount, milkID)
+			log.Printf("Player %d took 12 ammo from Milk %d\n", senderID, milkID)
+			// Don't broadcast client's ammo amount, use 12 for everyone
+			msg.data = packet.SerializeTakeAmmo(peerID, milkID, 12)
 		} else {
 			log.Printf("Player %d failed to take Ammo from Milk %d. Rejected.\n", senderID, milkID)
 		}

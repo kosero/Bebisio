@@ -7,6 +7,11 @@ func _ready() -> void:
 		_join_game()
 	else:
 		NetworkHandler.packet_received.connect(_on_packet_received)
+	NetworkHandler.disconnected.connect(_disconnected)
+
+
+func _disconnected() -> void:
+	ScenesLoader.load_scene("res://Scenes/UI/main_menu.tscn")
 
 
 func _on_packet_received(data: PackedByteArray) -> void:

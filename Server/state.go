@@ -2,6 +2,7 @@ package main
 
 import (
 	"sync"
+	"time"
 )
 
 type Player struct {
@@ -15,46 +16,50 @@ type Player struct {
 }
 
 type SpawnedItem struct {
-	ID        uint32
-	Type      byte
-	SpawnerID uint32
+	ID       uint32
+	Type     byte
+	Progress float32
 }
 
 type GameState struct {
-	mu              sync.RWMutex
-	players         map[uint32]*Player
-	takenCookies    map[uint32]bool
-	takenMilks      map[uint32]bool
-	spawnerOccupied map[uint32]bool
-	activeItems     map[uint32]*SpawnedItem
-	nextItemID      uint32
+	mu           sync.RWMutex
+	players      map[uint32]*Player
+	takenCookies map[uint32]bool
+	takenMilks   map[uint32]bool
+	activeItems  map[uint32]*SpawnedItem
+	nextItemID   uint32
+	lastCollect  int64
 }
 
 func NewGameState() *GameState {
 	return &GameState{
-		players:         make(map[uint32]*Player),
-		takenCookies:    make(map[uint32]bool),
-		takenMilks:      make(map[uint32]bool),
-		spawnerOccupied: make(map[uint32]bool),
-		activeItems:     make(map[uint32]*SpawnedItem),
-		nextItemID:      1,
+		players:      make(map[uint32]*Player),
+		takenCookies: make(map[uint32]bool),
+		takenMilks:   make(map[uint32]bool),
+		activeItems:  make(map[uint32]*SpawnedItem),
+		nextItemID:   1,
 	}
 }
 
-func (g *GameState) IsSpawnerOccupied(id uint32) bool {
+func (g *GameState) GetItemCount() int {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
-	return g.spawnerOccupied[id]
+	return len(g.activeItems)
 }
 
-func (g *GameState) RegisterSpawn(itemID uint32, spawnerID uint32, itemType byte) {
+func (g *GameState) GetLastCollect() int64 {
+	g.mu.RLock()
+	defer g.mu.RUnlock()
+	return g.lastCollect
+}
+
+func (g *GameState) RegisterSpawn(itemID uint32, progress float32, itemType byte) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
-	g.spawnerOccupied[spawnerID] = true
 	g.activeItems[itemID] = &SpawnedItem{
-		ID:        itemID,
-		Type:      itemType,
-		SpawnerID: spawnerID,
+		ID:       itemID,
+		Type:     itemType,
+		Progress: progress,
 	}
 }
 
@@ -105,50 +110,58 @@ func (g *GameState) SetPlayerName(id uint32, name string) {
 func (g *GameState) GetWorldState() ([]*Player, []*SpawnedItem) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
-	
+
 	players := make([]*Player, 0, len(g.players))
 	for _, p := range g.players {
-		if p.Name != "" { // Only sync players who have finished JOINing
+		if p.Name != "" {
 			players = append(players, p)
 		}
 	}
-	
+
 	items := make([]*SpawnedItem, 0, len(g.activeItems))
 	for _, item := range g.activeItems {
 		items = append(items, item)
 	}
-	
+
 	return players, items
 }
 
-func (g *GameState) CanTakeCookie(cookieID uint32) bool {
+func (g *GameState) CanTakeCookie(playerID, cookieID, healthAmount uint32) bool {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 	if g.takenCookies[cookieID] {
 		return false
 	}
-	g.takenCookies[cookieID] = true
 
-	if item, ok := g.activeItems[cookieID]; ok {
-		g.spawnerOccupied[item.SpawnerID] = false
-		delete(g.activeItems, cookieID)
+	if p, ok := g.players[playerID]; ok {
+		p.Health += healthAmount
+		if p.Health > 10 {
+			p.Health = 10
+		}
+		g.takenCookies[cookieID] = true
+
+		if _, ok := g.activeItems[cookieID]; ok {
+			delete(g.activeItems, cookieID)
+			g.lastCollect = time.Now().Unix()
+		}
+		return true
 	}
-	return true
+	return false
 }
 
-func (g *GameState) CanTakeAmmo(playerID, milkID, amount uint32) bool {
+func (g *GameState) CanTakeAmmo(playerID, milkID, _ uint32) bool {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 	if g.takenMilks[milkID] {
 		return false
 	}
 	if p, ok := g.players[playerID]; ok {
-		p.Ammo += amount
+		p.Ammo += 12
 		g.takenMilks[milkID] = true
 
-		if item, ok := g.activeItems[milkID]; ok {
-			g.spawnerOccupied[item.SpawnerID] = false
+		if _, ok := g.activeItems[milkID]; ok {
 			delete(g.activeItems, milkID)
+			g.lastCollect = time.Now().Unix()
 		}
 		return true
 	}

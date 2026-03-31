@@ -15,19 +15,19 @@ script = ExtResource("2_i2xx2")
 
 [node name="Label" type="Label" parent="." unique_id=1712531448]
 layout_mode = 0
-offset_left = 644.0
-offset_top = 37.0
-offset_right = 1003.0
-offset_bottom = 202.0
+offset_left = 274.0
+offset_top = 28.0
+offset_right = 1139.0
+offset_bottom = 193.0
 theme_override_font_sizes/font_size = 128
-text = "Bebis Io"
+text = "Manyak Bebisler "
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1942655212]
 layout_mode = 0
-offset_left = 112.0
-offset_top = 280.0
-offset_right = 612.0
-offset_bottom = 507.0
+offset_left = 100.0
+offset_top = 348.0
+offset_right = 609.0
+offset_bottom = 500.0
 theme_override_constants/separation = 16
 
 [node name="NameEntry" type="LineEdit" parent="VBoxContainer" unique_id=259355619]
@@ -36,7 +36,6 @@ layout_mode = 2
 placeholder_text = "Name..."
 
 [node name="SettingsBtn" type="Button" parent="VBoxContainer" unique_id=1734949366]
-visible = false
 layout_mode = 2
 text = "Settings"
 

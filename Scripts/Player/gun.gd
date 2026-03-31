@@ -44,6 +44,7 @@ func shoot(shooter_id: int = -1) -> void:
 			bullet_sound.play()
 		if shooter_id == -1:
 			amount -= 1
+		get_parent().camera_shake()
 
 
 func take_ammo(ammo: int) -> void:

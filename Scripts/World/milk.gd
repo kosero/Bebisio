@@ -1,7 +1,7 @@
 extends Area2D
 
 @export var item_id: int = 0
-@export_range(1, 12) var amount: int = 6
+@export_range(1, 24) var amount: int = 12
 
 func _ready() -> void:
 	collision_mask = 2

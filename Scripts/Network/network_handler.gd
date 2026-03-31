@@ -1,6 +1,7 @@
 extends Node
 
 signal packet_received(data: PackedByteArray)
+signal disconnected()
 
 var ws: WebSocketPeer
 var client_id: int = -1
@@ -31,6 +32,7 @@ func _process(delta: float) -> void:
 			print("Closing...")
 		WebSocketPeer.STATE_CLOSED:
 			_clear_players()
+			disconnected.emit()
 			_try_reconnect(delta)
 
 

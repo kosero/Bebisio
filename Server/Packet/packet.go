@@ -39,12 +39,12 @@ func SerializeGoodbye(clientID uint32) []byte {
 	return buf
 }
 
-func SerializeSpawnItem(itemType byte, itemID uint32, spawnerID uint32) []byte {
+func SerializeSpawnItem(itemType byte, itemID uint32, progress float32) []byte {
 	buf := make([]byte, 10)
 	buf[0] = SPAWN_ITEM
 	buf[1] = itemType
 	binary.LittleEndian.PutUint32(buf[2:6], itemID)
-	binary.LittleEndian.PutUint32(buf[6:10], spawnerID)
+	binary.LittleEndian.PutUint32(buf[6:10], float32tobits(progress))
 	return buf
 }
 
@@ -72,6 +72,15 @@ func ParseTakeAmmo(data []byte) (peerID uint32, itemID uint32, ammo uint32, ok b
 	itemID = binary.LittleEndian.Uint32(data[5:9])
 	ammo = binary.LittleEndian.Uint32(data[9:13])
 	return peerID, itemID, ammo, true
+}
+
+func SerializeTakeAmmo(peerID uint32, itemID uint32, ammo uint32) []byte {
+	buf := make([]byte, 13)
+	buf[0] = TAKE_AMMO
+	binary.LittleEndian.PutUint32(buf[1:5], peerID)
+	binary.LittleEndian.PutUint32(buf[5:9], itemID)
+	binary.LittleEndian.PutUint32(buf[9:13], ammo)
+	return buf
 }
 
 func ParseShoot(data []byte) (peerID uint32, ok bool) {

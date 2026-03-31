@@ -10,9 +10,11 @@ config_version=5
 
 [application]
 
-config/name="Bebisio"
+config/name="Manyak Bebisler"
 run/main_scene="uid://c35x0d44i1dov"
 config/features=PackedStringArray("4.6", "GL Compatibility")
+boot_splash/stretch_mode=0
+boot_splash/image="uid://02cwkjevtjcw"
 config/icon="uid://02cwkjevtjcw"
 config/macos_native_icon="uid://02cwkjevtjcw"
 config/windows_native_icon="uid://02cwkjevtjcw"
@@ -85,4 +87,4 @@ rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
-environment/defaults/default_clear_color=Color(0.039215688, 0.05882353, 0.07058824, 1)
+environment/defaults/default_clear_color=Color(0.02745098, 0.03529412, 0.047058824, 1)
