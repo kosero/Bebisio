@@ -127,8 +127,14 @@ func take_cookie(amount: int = 1) -> void:
 
 
 func take_damage(amount = 1) -> void:
+	if not is_local_player:
+		return
 	health -= amount
 	health = clamp(health, 0, 10)
+	if anim.material:
+		anim.material.set_shader_parameter("hit_effect", 0.2)
+		var tween = create_tween()
+		tween.tween_property(anim.material, "shader_parameter/hit_effect", 0.0, 0.5)
 	if health <= 0:
 		player_dead()
 
@@ -150,19 +156,20 @@ func respawn() -> void:
 
 
 func camera_shake(duration: float = 0.5, intensity: float = 4.0) -> void:
-	var elapsed = 0.0
+	if not is_local_player:
+		return
 	
-	while elapsed < duration:
-		await get_tree().process_frame
-		var delta = get_process_delta_time()
-		elapsed += delta
-		
-		var progress = elapsed / duration
-		var current_intensity = intensity * (1.0 - progress)
-		
-		camera.offset = Vector2(
-			randf_range(-current_intensity, current_intensity),
-			randf_range(-current_intensity, current_intensity)
-		)
-	
-	camera.offset = Vector2.ZERO 
+	var shake_tween = create_tween()
+	shake_tween.tween_method(
+		func(progress: float):
+			var current_intensity = intensity * (1.0 - progress)
+			
+			camera.offset = Vector2(
+				randf_range(-current_intensity, current_intensity),
+				randf_range(-current_intensity, current_intensity)
+			),
+		0.0,
+		1.0,
+		duration 
+	)
+	shake_tween.finished.connect(func(): camera.offset = Vector2.ZERO)

@@ -3,13 +3,16 @@
 [ext_resource type="Script" uid="uid://biwpkqrasvw5b" path="res://Scripts/Player/player.gd" id="1_5wxv7"]
 [ext_resource type="Texture2D" uid="uid://d1aey7n8bn6bn" path="res://Textures/manyak_bebis.png" id="1_y6xdh"]
 [ext_resource type="Texture2D" uid="uid://bexfm0yi1r5qd" path="res://Materials/light_tex.tres" id="2_08u7w"]
+[ext_resource type="Shader" uid="uid://dwy31d51qiiqn" path="res://Shaders/damage.gdshader" id="3_m62uw"]
 [ext_resource type="Theme" uid="uid://bon60kncnflmp" path="res://Materials/ui_theme.tres" id="3_y5hcb"]
 [ext_resource type="Texture2D" uid="uid://we5nyex4g767" path="res://Textures/gun.png" id="4_2nftw"]
 [ext_resource type="Script" uid="uid://d4l6e160h4igp" path="res://Scripts/Player/hud.gd" id="4_hck1p"]
 [ext_resource type="Script" uid="uid://cay7his34tk88" path="res://Scripts/Player/gun.gd" id="5_knrd4"]
 [ext_resource type="PackedScene" uid="uid://cnhoqlq275j4s" path="res://Prefabs/bullet.tscn" id="7_juxdh"]
 [ext_resource type="AudioStream" uid="uid://43kw4oejdqag" path="res://Sounds/Lazer.wav" id="8_4qbli"]
+[ext_resource type="Shader" uid="uid://ct65fw7wvkmk0" path="res://Shaders/mana.gdshader" id="10_3vpsw"]
 [ext_resource type="AudioStream" uid="uid://bd5yohyakiat" path="res://Sounds/ham.mp3" id="10_kgmex"]
+[ext_resource type="Script" uid="uid://bibp5foa2pbqq" path="res://Scripts/Player/cursor_manager.gd" id="11_2xbkd"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_kgmex"]
 polygon = PackedVector2Array(-1, 8, -1, 7, -2, 7, -2, 8)
@@ -19,6 +22,14 @@ polygon = PackedVector2Array(2, 8, 2, 7, 1, 7, 1, 8)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5wxv7"]
 radius = 6.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b30ri"]
+resource_local_to_scene = true
+shader = ExtResource("3_m62uw")
+shader_parameter/hit_effect = 0.0
+shader_parameter/shake_intensity = 10.0
+shader_parameter/flash_speed = 30.0
+shader_parameter/flash_color = Color(1, 0, 0, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5wxv7"]
 atlas = ExtResource("1_y6xdh")
@@ -175,12 +186,53 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y5hcb"]
-bg_color = Color(0.8901961, 0.8666667, 0.81960785, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3vpsw"]
+shader = ExtResource("10_3vpsw")
+shader_parameter/freq_times_PI = 2.10000009975
+shader_parameter/strength = 0.1
+shader_parameter/center = 0.75200003572
+shader_parameter/wave_speed = 1.200000057
+shader_parameter/amp_osc_freq = 0.5
+
+[sub_resource type="Gradient" id="Gradient_m62uw"]
+offsets = PackedFloat32Array(0, 0.36466166, 1)
+colors = PackedColorArray(0.37254903, 0.48235294, 0.3254902, 1, 0.37254903, 0.48235294, 0.3254902, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_b30ri"]
+gradient = SubResource("Gradient_m62uw")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m62uw"]
+shader = ExtResource("10_3vpsw")
+shader_parameter/freq_times_PI = 2.10000009975
+shader_parameter/strength = 0.1
+shader_parameter/center = 0.75200003572
+shader_parameter/wave_speed = 1.200000057
+shader_parameter/amp_osc_freq = 0.5
+
+[sub_resource type="Gradient" id="Gradient_3vpsw"]
+offsets = PackedFloat32Array(0, 0.36466166, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_m62uw"]
+gradient = SubResource("Gradient_3vpsw")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m62uw"]
+bg_color = Color(0.19607843, 0.23137255, 0.25882354, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b30ri"]
+bg_color = Color(0.37254903, 0.48235294, 0.3254902, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [node name="Player" type="CharacterBody2D" unique_id=1933084700 groups=["player"]]
 z_index = 3
@@ -215,6 +267,7 @@ shape = SubResource("CircleShape2D_5wxv7")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1019266277]
 unique_name_in_owner = true
 z_index = 1
+material = SubResource("ShaderMaterial_b30ri")
 sprite_frames = SubResource("SpriteFrames_wphcr")
 animation = &"idle_down"
 
@@ -255,51 +308,12 @@ grow_vertical = 2
 theme = ExtResource("3_y5hcb")
 script = ExtResource("4_hck1p")
 
-[node name="HealthBar" type="ProgressBar" parent="CanvasLayer/Hud" unique_id=347964262]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(203.795, 0)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -219.79498
-offset_top = 30.0
-offset_right = -16.0
-offset_bottom = 57.0
-grow_horizontal = 0
-max_value = 10.0
-show_percentage = false
-
-[node name="BulletBar" type="ProgressBar" parent="CanvasLayer/Hud" unique_id=1465695963]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(203.795, 0)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -219.79498
-offset_top = 70.0
-offset_right = -16.0
-offset_bottom = 97.0
-grow_horizontal = 0
-theme_override_styles/fill = SubResource("StyleBoxFlat_y5hcb")
-max_value = 12.0
-value = 12.0
-show_percentage = false
-
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Hud" unique_id=883111515]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -143.0
-offset_top = -66.0
-offset_right = -24.0
-offset_bottom = -24.0
-grow_horizontal = 0
-grow_vertical = 0
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 143.0
+offset_bottom = 58.0
 
 [node name="Label" type="Label" parent="CanvasLayer/Hud/HBoxContainer" unique_id=793021887]
 layout_mode = 2
@@ -310,16 +324,43 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "0"
 
+[node name="HealthBar" type="Sprite2D" parent="CanvasLayer/Hud" unique_id=2055630536]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_3vpsw")
+position = Vector2(1104, 48)
+scale = Vector2(1.5, 1.5)
+texture = SubResource("GradientTexture2D_b30ri")
+
+[node name="BulletBar" type="Sprite2D" parent="CanvasLayer/Hud" unique_id=1281968071]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_m62uw")
+position = Vector2(1003, 48)
+scale = Vector2(1.5, 1.5)
+texture = SubResource("GradientTexture2D_m62uw")
+
 [node name="Username" type="Label" parent="." unique_id=2097224627]
 unique_name_in_owner = true
 z_index = 6
 offset_left = -37.0
-offset_top = -14.0
+offset_top = -17.0
 offset_right = 37.0
-offset_bottom = -2.0
+offset_bottom = -5.0
 theme_override_font_sizes/font_size = 8
 text = "TEST"
 horizontal_alignment = 1
+
+[node name="health_progress" type="ProgressBar" parent="Username" unique_id=553521564]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 29.0
+offset_top = 10.0
+offset_right = 45.0
+offset_bottom = 12.0
+theme_override_styles/background = SubResource("StyleBoxFlat_m62uw")
+theme_override_styles/fill = SubResource("StyleBoxFlat_b30ri")
+max_value = 10.0
+value = 10.0
+show_percentage = false
 
 [node name="AudioListener2D" type="AudioListener2D" parent="." unique_id=518212693]
 unique_name_in_owner = true
@@ -329,3 +370,7 @@ unique_name_in_owner = true
 stream = ExtResource("10_kgmex")
 volume_db = -15.0
 max_distance = 60.0
+
+[node name="CursorManager" type="Node2D" parent="." unique_id=1595370885]
+z_index = -1
+script = ExtResource("11_2xbkd")
