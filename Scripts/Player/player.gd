@@ -31,6 +31,9 @@ const POSITION_SEND_INTERVAL: float = 0.05 # 20 Hz
 var cookie_counter: int = 0
 @onready var ham_sound: AudioStreamPlayer2D = %HamSound
 
+var health: int = 10
+
+
 func _ready() -> void:
 	target_position = global_position
 	username_label.text = username
@@ -54,7 +57,7 @@ func _interpolate_remote_player(delta: float) -> void:
 	var movement_delta = target_position - global_position
 	if movement_delta.length() > 0.1:
 		state = State.walk
-		velocity = movement_delta # Used by _update_face
+		velocity = movement_delta
 	else:
 		state = State.idle
 
@@ -63,6 +66,9 @@ func _interpolate_remote_player(delta: float) -> void:
 
 
 func _send_position_to_server(delta: float) -> void:
+	if peer_id == -1:
+		return
+
 	position_send_timer += delta
 	if position_send_timer >= POSITION_SEND_INTERVAL:
 		if global_position.distance_to(last_sent_position) > 0.1:
@@ -142,5 +148,13 @@ func take_cookie(amount: int = 1) -> void:
 	ham_sound.play()
 
 
-func take_damage() -> void:
+func take_damage(amount = 1) -> void:
+	if health < 0:
+		player_dead()
+
+	health -= amount
+	health = clamp(health, 0, 10)
+
+
+func player_dead() -> void:
 	pass

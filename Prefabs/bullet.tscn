@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cnhoqlq275j4s"]
 
-[ext_resource type="Script" uid="uid://cdb5okciwjk1y" path="res://Scripts/bullet.gd" id="1_0oen4"]
+[ext_resource type="Script" uid="uid://cdb5okciwjk1y" path="res://Scripts/Player/bullet.gd" id="1_0oen4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7dga7"]
 size = Vector2(2, 1)
@@ -28,3 +28,5 @@ lifetime = 0.5
 use_fixed_seed = true
 seed = 3880429314
 process_material = SubResource("ParticleProcessMaterial_0oen4")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

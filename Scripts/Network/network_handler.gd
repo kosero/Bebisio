@@ -4,7 +4,7 @@ signal packet_received(data: PackedByteArray)
 
 var ws: WebSocketPeer
 var client_id: int = -1
-var players: Dictionary = {} # peer_id -> PlayerNode
+var players: Dictionary = {}
 
 const WEBSOCKET_URL: String = "ws://localhost:8965"
 const RECONNECT_INTERVAL: float = 2.0

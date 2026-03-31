@@ -2,6 +2,7 @@ extends Node
 
 
 signal player_spawn(name: String, peer_id: int)
+signal spawn_item(item_type: int, item_id: int, spawner_id: int)
 
 
 func _ready() -> void:
@@ -32,6 +33,9 @@ func _on_packet_received(data: PackedByteArray) -> void:
 		Packet.TAKE_AMMO:
 			_take_ammo_packet_handle(data)
 
+		Packet.SPAWN_ITEM:
+			_spawn_item_packet_handle(data)
+
 
 func _welcome_packet_handle(data: PackedByteArray) -> void:
 	var p = WelcomePacket.deserialize(data)
@@ -49,6 +53,11 @@ func _goodbye_packet_handle(data: PackedByteArray) -> void:
 func _join_packet_handle(data: PackedByteArray) -> void:
 	var p = JoinPacket.deserialize(data)
 	player_spawn.emit(p.name, p.peer_id)
+
+
+func _spawn_item_packet_handle(data: PackedByteArray) -> void:
+	var p = SpawnItemPacket.deserialize(data)
+	spawn_item.emit(p.item_type, p.item_id, p.spawner_id)
 
 
 func _position_packet_handle(data: PackedByteArray) -> void:

@@ -1,10 +1,13 @@
 [gd_scene format=4 uid="uid://dy3icl1f32yrj"]
 
+[ext_resource type="Script" uid="uid://df6jyjmoh415x" path="res://Scripts/world.gd" id="1_8j60k"]
 [ext_resource type="PackedScene" uid="uid://yysfcuio22fs" path="res://Prefabs/player.tscn" id="1_a02cp"]
 [ext_resource type="TileSet" uid="uid://ba4wpv81vehem" path="res://Materials/dungeon_sheet.tres" id="1_go701"]
 [ext_resource type="Script" uid="uid://cw5n2to08t05k" path="res://Scripts/Network/player_spawner.gd" id="2_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://dy2of5yffw6o1" path="res://Prefabs/milk.tscn" id="3_5a7ea"]
 
 [node name="World" type="Node2D" unique_id=1393002764]
+script = ExtResource("1_8j60k")
 
 [node name="Layers" type="Node2D" parent="." unique_id=875645524]
 
@@ -21,3 +24,6 @@ tile_set = ExtResource("1_go701")
 position = Vector2(261, 148)
 script = ExtResource("2_5a7ea")
 PLAYER = ExtResource("1_a02cp")
+
+[node name="Milk" parent="." unique_id=672416622 instance=ExtResource("3_5a7ea")]
+position = Vector2(221, 143)
