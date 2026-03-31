@@ -7,13 +7,16 @@ var client_id: int = -1
 var player_name: String = ""
 var players: Dictionary = {}
 
-const WEBSOCKET_URL: String = "ws://localhost:8965"
+const WEBSOCKET_URL: String = "wss://wsbebis.atchannel.top"
 const RECONNECT_INTERVAL: float = 2.0
 
 var _reconnect_timer: float = 0.0
 
+@onready var encryption_handler = preload("res://Scripts/Network/encryption_handler.gd").new()
+
 
 func _ready() -> void:
+	add_child(encryption_handler)
 	_websocket_connect()
 
 
@@ -41,13 +44,17 @@ func _clear_players() -> void:
 
 func _handle_incoming_packets() -> void:
 	while ws.get_available_packet_count():
-		var packet = ws.get_packet()
-		packet_received.emit(packet)
+		var data = ws.get_packet()
+		var decrypted = encryption_handler.decrypt(data)
+		if not decrypted.is_empty():
+			packet_received.emit(decrypted)
 
 
 func send_packet(p: Packet) -> void:
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN:
-		ws.put_packet(p.serialize())
+		var data = p.serialize()
+		var encrypted = encryption_handler.encrypt(data)
+		ws.put_packet(encrypted)
 
 
 func _try_reconnect(delta) -> void:

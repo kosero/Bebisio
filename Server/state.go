@@ -5,11 +5,19 @@ import (
 )
 
 type Player struct {
-	ID   uint32
-	Name string
-	X    float32
-	Y    float32
-	Ammo uint32
+	ID        uint32
+	Name      string
+	X         float32
+	Y         float32
+	LookAngle float32
+	Health    uint32
+	Ammo      uint32
+}
+
+type SpawnedItem struct {
+	ID        uint32
+	Type      byte
+	SpawnerID uint32
 }
 
 type GameState struct {
@@ -18,7 +26,7 @@ type GameState struct {
 	takenCookies    map[uint32]bool
 	takenMilks      map[uint32]bool
 	spawnerOccupied map[uint32]bool
-	itemSpawnerMap  map[uint32]uint32
+	activeItems     map[uint32]*SpawnedItem
 	nextItemID      uint32
 }
 
@@ -28,7 +36,7 @@ func NewGameState() *GameState {
 		takenCookies:    make(map[uint32]bool),
 		takenMilks:      make(map[uint32]bool),
 		spawnerOccupied: make(map[uint32]bool),
-		itemSpawnerMap:  make(map[uint32]uint32),
+		activeItems:     make(map[uint32]*SpawnedItem),
 		nextItemID:      1,
 	}
 }
@@ -39,11 +47,15 @@ func (g *GameState) IsSpawnerOccupied(id uint32) bool {
 	return g.spawnerOccupied[id]
 }
 
-func (g *GameState) RegisterSpawn(itemID uint32, spawnerID uint32) {
+func (g *GameState) RegisterSpawn(itemID uint32, spawnerID uint32, itemType byte) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 	g.spawnerOccupied[spawnerID] = true
-	g.itemSpawnerMap[itemID] = spawnerID
+	g.activeItems[itemID] = &SpawnedItem{
+		ID:        itemID,
+		Type:      itemType,
+		SpawnerID: spawnerID,
+	}
 }
 
 func (g *GameState) GenerateItemId() uint32 {
@@ -58,8 +70,9 @@ func (g *GameState) AddPlayer(id uint32) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 	g.players[id] = &Player{
-		ID:   id,
-		Ammo: 0,
+		ID:     id,
+		Ammo:   0,
+		Health: 10,
 	}
 }
 
@@ -69,13 +82,15 @@ func (g *GameState) RemovePlayer(id uint32) {
 	delete(g.players, id)
 }
 
-func (g *GameState) UpdatePlayerPosition(id uint32, x, y float32) {
+func (g *GameState) UpdatePlayerPosition(id, health uint32, x, y, look float32) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
 	if p, ok := g.players[id]; ok {
 		p.X = x
 		p.Y = y
+		p.LookAngle = look
+		p.Health = health
 	}
 }
 
@@ -87,6 +102,25 @@ func (g *GameState) SetPlayerName(id uint32, name string) {
 	}
 }
 
+func (g *GameState) GetWorldState() ([]*Player, []*SpawnedItem) {
+	g.mu.RLock()
+	defer g.mu.RUnlock()
+	
+	players := make([]*Player, 0, len(g.players))
+	for _, p := range g.players {
+		if p.Name != "" { // Only sync players who have finished JOINing
+			players = append(players, p)
+		}
+	}
+	
+	items := make([]*SpawnedItem, 0, len(g.activeItems))
+	for _, item := range g.activeItems {
+		items = append(items, item)
+	}
+	
+	return players, items
+}
+
 func (g *GameState) CanTakeCookie(cookieID uint32) bool {
 	g.mu.Lock()
 	defer g.mu.Unlock()
@@ -95,9 +129,9 @@ func (g *GameState) CanTakeCookie(cookieID uint32) bool {
 	}
 	g.takenCookies[cookieID] = true
 
-	if spawnerID, ok := g.itemSpawnerMap[cookieID]; ok {
-		g.spawnerOccupied[spawnerID] = false
-		delete(g.itemSpawnerMap, cookieID)
+	if item, ok := g.activeItems[cookieID]; ok {
+		g.spawnerOccupied[item.SpawnerID] = false
+		delete(g.activeItems, cookieID)
 	}
 	return true
 }
@@ -112,9 +146,9 @@ func (g *GameState) CanTakeAmmo(playerID, milkID, amount uint32) bool {
 		p.Ammo += amount
 		g.takenMilks[milkID] = true
 
-		if spawnerID, ok := g.itemSpawnerMap[milkID]; ok {
-			g.spawnerOccupied[spawnerID] = false
-			delete(g.itemSpawnerMap, milkID)
+		if item, ok := g.activeItems[milkID]; ok {
+			g.spawnerOccupied[item.SpawnerID] = false
+			delete(g.activeItems, milkID)
 		}
 		return true
 	}
@@ -131,4 +165,13 @@ func (g *GameState) CanShoot(playerID uint32) bool {
 		}
 	}
 	return false
+}
+
+func (g *GameState) ResetPlayer(playerID uint32) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if p, ok := g.players[playerID]; ok {
+		p.Ammo = 0
+		p.Health = 10
+	}
 }

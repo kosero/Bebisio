@@ -21,10 +21,7 @@ func _on_spawn_item(item_type: int, item_id: int, _spawner_id: int) -> void:
 
 	elif item_type == 1 and cookie_scene:
 		instance = cookie_scene.instantiate()
-		if "cookie_id" in instance:
-			instance.cookie_id = item_id
-		elif "item_id" in instance:
-			instance.item_id = item_id
+		instance.item_id = item_id
 
 	if instance:
 		instance.global_position = global_position

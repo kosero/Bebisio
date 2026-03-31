@@ -22,6 +22,11 @@ var interpolation_speed: float = 15.0
 @onready var shape: ShapeCast2D = %ShapeCast2D
 @onready var gun: Sprite2D = %Gun
 @onready var username_label: Label = %Username
+@onready var camera: Camera2D = $Camera2D
+@onready var canvas_layer: CanvasLayer = $CanvasLayer
+@onready var audio_listener: AudioListener2D = $AudioListener2D
+@onready var canvas_modulate: CanvasModulate = $CanvasModulate
+
 
 var previous_colliders: Array = []
 var last_sent_position: Vector2 = Vector2.ZERO
@@ -38,10 +43,18 @@ func _ready() -> void:
 	target_position = global_position
 	username_label.text = username
 
+	collision_layer = 2
+	collision_mask = 1
+
+	camera.enabled = is_local_player
+	canvas_layer.visible = is_local_player
+	canvas_modulate.visible = is_local_player
+	if is_local_player:
+		audio_listener.make_current()
+
 
 func _physics_process(delta: float) -> void:
 	if is_local_player:
-		_raycast_handle()
 		_movement_handle(delta)
 		_state_manager()
 		_animation_manager()
@@ -71,8 +84,8 @@ func _send_position_to_server(delta: float) -> void:
 
 	position_send_timer += delta
 	if position_send_timer >= POSITION_SEND_INTERVAL:
-		if global_position.distance_to(last_sent_position) > 0.1:
-			var p = PositionPacket.new(global_position.x, global_position.y, peer_id)
+		if global_position.distance_to(last_sent_position) > 0.1 or true:
+			var p = PositionPacket.new(global_position.x, global_position.y, gun.rotation, health, peer_id)
 			NetworkHandler.send_packet(p)
 			last_sent_position = global_position
 		position_send_timer = 0.0
@@ -111,50 +124,29 @@ func _animation_manager() -> void:
 		anim.play(full_anim_name)
 
 
-func _raycast_handle() -> void:
-	var current_colliders: Array = []
-
-	if shape.is_colliding():
-		for i in shape.get_collision_count():
-			var body = shape.get_collider(i)
-			if body == null or body.is_in_group("wall") or body == self:
-				continue
-
-			current_colliders.append(body)
-
-			var space = get_world_2d().direct_space_state
-			var query = PhysicsRayQueryParameters2D.create(
-				global_position,
-				body.global_position
-			)
-			query.exclude = [self]
-			query.collision_mask = 1
-
-			var result = space.intersect_ray(query)
-
-			if not result or result.collider == body:
-				body.visible = true
-			else:
-				body.visible = false
-
-	for body in previous_colliders:
-		if not current_colliders.has(body) and is_instance_valid(body):
-			body.visible = false
-	previous_colliders = current_colliders
-
-
 func take_cookie(amount: int = 1) -> void:
 	cookie_counter += amount
 	ham_sound.play()
 
 
 func take_damage(amount = 1) -> void:
-	if health < 0:
-		player_dead()
-
 	health -= amount
 	health = clamp(health, 0, 10)
+	if health <= 0:
+		player_dead()
 
 
 func player_dead() -> void:
-	pass
+	if not is_local_player:
+		return
+	var p = RespawnPacket.new(peer_id)
+	NetworkHandler.send_packet(p)
+
+
+func respawn() -> void:
+	health = 10
+	cookie_counter = 0
+	gun.amount = 0
+	position = Vector2.ZERO
+	target_position = global_position
+	last_sent_position = global_position

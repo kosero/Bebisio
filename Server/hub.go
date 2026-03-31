@@ -33,6 +33,9 @@ func NewHub() *Hub {
 }
 
 func (h *Hub) Run() {
+	spawnTicker := time.NewTicker(5 * time.Second)
+	defer spawnTicker.Stop()
+
 	for {
 		select {
 		case client := <-h.register:
@@ -65,49 +68,51 @@ func (h *Hub) Run() {
 			}
 		case message := <-h.broadcast:
 			h.routePacket(message)
+
+		case <-spawnTicker.C:
+			h.spawnItem()
 		}
 	}
 }
 
-func (h *Hub) itemSpawnerTicker() {
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
-
-	for range ticker.C {
-		if len(h.clients) == 0 {
-			continue
-		}
-
-		var freeSpawners []uint32
-		for i := uint32(0); i < 5; i++ {
-			if !h.state.IsSpawnerOccupied(i) {
-				freeSpawners = append(freeSpawners, i)
-			}
-		}
-
-		if len(freeSpawners) == 0 {
-			continue
-		}
-
-		itemType := byte(rand.Intn(2))
-		itemID := h.state.GenerateItemId()
-
-		spawnerID := freeSpawners[rand.Intn(len(freeSpawners))]
-		h.state.RegisterSpawn(itemID, spawnerID)
-
-		spawnPkt := packet.SerializeSpawnItem(itemType, itemID, spawnerID)
-
-		h.broadcast <- &BroadcastMessage{
-			sender: nil,
-			data:   spawnPkt,
-		}
-
-		itemStr := "Milk"
-		if itemType == 1 {
-			itemStr = "Cookie"
-		}
-		log.Printf("Server spawned %s (ID: %d) at Spawner %d\n", itemStr, itemID, spawnerID)
+func (h *Hub) spawnItem() {
+	if len(h.clients) == 0 {
+		return
 	}
+
+	var freeSpawners []uint32
+	for i := uint32(0); i < 5; i++ {
+		if !h.state.IsSpawnerOccupied(i) {
+			freeSpawners = append(freeSpawners, i)
+		}
+	}
+
+	if len(freeSpawners) == 0 {
+		return
+	}
+
+	itemType := byte(rand.Intn(2))
+	itemID := h.state.GenerateItemId()
+
+	spawnerID := freeSpawners[rand.Intn(len(freeSpawners))]
+	h.state.RegisterSpawn(itemID, spawnerID, itemType)
+
+	spawnPkt := packet.SerializeSpawnItem(itemType, itemID, spawnerID)
+
+	for targetID, client := range h.clients {
+		select {
+		case client.send <- spawnPkt:
+		default:
+			close(client.send)
+			delete(h.clients, targetID)
+		}
+	}
+
+	itemStr := "Milk"
+	if itemType == 1 {
+		itemStr = "Cookie"
+	}
+	log.Printf("Server spawned %s (ID: %d) at Spawner %d\n", itemStr, itemID, spawnerID)
 }
 
 func (h *Hub) routePacket(msg *BroadcastMessage) {
@@ -130,10 +135,31 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 
 	switch pktType {
 	case packet.JOIN:
-		isValid = true
+		id, name, ok := packet.ParseJoin(msg.data)
+		if ok && id == senderID {
+			h.state.SetPlayerName(senderID, name)
+			isValid = true
+			log.Printf("Player %d joined as %s\n", senderID, name)
+
+			// Sync OTHER players and ALL items to THIS newcomer
+			players, items := h.state.GetWorldState()
+			for _, p := range players {
+				if p.ID != senderID {
+					msg.sender.send <- packet.SerializeJoin(p.ID, p.Name)
+					msg.sender.send <- packet.SerializePosition(p.ID, p.Health, p.X, p.Y, p.LookAngle)
+				}
+			}
+			for _, item := range items {
+				msg.sender.send <- packet.SerializeSpawnItem(item.Type, item.ID, item.SpawnerID)
+			}
+		}
 
 	case packet.POSITION:
-		isValid = true
+		id, health, x, y, look, ok := packet.ParsePosition(msg.data)
+		if ok && id == senderID {
+			h.state.UpdatePlayerPosition(senderID, health, x, y, look)
+			isValid = true
+		}
 
 	case packet.TAKE_COOKIE:
 		peerID, cookieID, ok := packet.ParseTakeCookie(msg.data)
@@ -160,6 +186,14 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 			log.Printf("Player %d shot\n", senderID)
 		} else {
 			log.Printf("Player %d tried to shoot but no ammo. Rejected.\n", senderID)
+		}
+
+	case packet.RESPAWN:
+		peerID, ok := packet.ParseRespawn(msg.data)
+		if ok && peerID == senderID {
+			h.state.ResetPlayer(senderID)
+			isValid = true
+			log.Printf("Player %d respawned\n", senderID)
 		}
 
 	default:

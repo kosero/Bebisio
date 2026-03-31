@@ -17,7 +17,6 @@ func main() {
 
 	hub := NewHub()
 	go hub.Run()
-	go hub.itemSpawnerTicker()
 
 	app.Use("/", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {

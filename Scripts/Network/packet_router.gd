@@ -36,6 +36,9 @@ func _on_packet_received(data: PackedByteArray) -> void:
 		Packet.SPAWN_ITEM:
 			_spawn_item_packet_handle(data)
 
+		Packet.RESPAWN:
+			_respawn_packet_handle(data)
+
 
 func _welcome_packet_handle(data: PackedByteArray) -> void:
 	var p = WelcomePacket.deserialize(data)
@@ -69,6 +72,10 @@ func _position_packet_handle(data: PackedByteArray) -> void:
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
 		player.target_position = Vector2(p.x, p.y)
+		player.health = p.health
+		if player.gun:
+			player.gun.rotation = p.look_angle
+			player.gun.sync_position(p.look_angle)
 
 
 func _take_cookie_packet_handle(data: PackedByteArray) -> void:
@@ -85,7 +92,7 @@ func _take_cookie_packet_handle(data: PackedByteArray) -> void:
 
 func _get_cookie_with_id(id: int) -> Node:
 	for cookie in get_tree().get_nodes_in_group("cookie"):
-		if "cookie_id" in cookie and cookie.cookie_id == id:
+		if "item_id" in cookie and cookie.item_id == id:
 			return cookie
 	return null
 
@@ -116,7 +123,14 @@ func _shoot_packet_handle(data: PackedByteArray) -> void:
 
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
-		player.gun.shoot()
+		player.gun.shoot(p.peer_id)
+
+
+func _respawn_packet_handle(data: PackedByteArray) -> void:
+	var p = RespawnPacket.deserialize(data)
+	var player = _get_player_with_peer_id(p.peer_id)
+	if player:
+		player.respawn()
 
 
 func _get_player_with_peer_id(peer_id: int) -> Node:

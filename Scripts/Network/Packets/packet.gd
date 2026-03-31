@@ -6,6 +6,7 @@ const TAKE_COOKIE: int = 0x03
 const TAKE_AMMO: int = 0x04
 const SHOOT: int = 0x05
 const SPAWN_ITEM: int = 0x06
+const RESPAWN: int = 0x07
 
 const WELCOME: int = 0x10
 const GOODBYE: int = 0x11

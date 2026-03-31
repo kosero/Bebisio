@@ -3,6 +3,10 @@ extends Area2D
 @export var item_id: int = 0
 
 
+func _ready() -> void:
+	collision_mask = 2
+
+
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player") and body.is_local_player:
 		set_deferred("monitoring", false)

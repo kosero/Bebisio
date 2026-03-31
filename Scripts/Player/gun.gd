@@ -23,21 +23,27 @@ func _process(_delta: float) -> void:
 
 	var mouse_pos: Vector2 = get_parent().get_local_mouse_position()
 	var angle = mouse_pos.angle()
-	position = Vector2.from_angle(angle) * radius
-	rotation = angle
-	flip_v = mouse_pos.x < 0
+	sync_position(angle)
 	amount = clamp(amount, 0, amount_max)
 
 
-func shoot() -> void:
-	if amount > 0:
+func sync_position(angle: float) -> void:
+	position = Vector2.from_angle(angle) * radius
+	rotation = angle
+	flip_v = cos(angle) < 0
+
+
+func shoot(shooter_id: int = -1) -> void:
+	if amount > 0 or shooter_id != -1:
 		var b = bullet.instantiate()
 		get_parent().add_child(b)
 		b.global_position = global_position
 		b.rotation = rotation
+		b.shooter_id = shooter_id if shooter_id != -1 else get_parent().peer_id
 		if !bullet_sound.playing:
 			bullet_sound.play()
-		amount -= 1
+		if shooter_id == -1:
+			amount -= 1
 
 
 func take_ammo(ammo: int) -> void:

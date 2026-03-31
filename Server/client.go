@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	packet "server/Packet"
 	"time"
 
 	"github.com/gofiber/websocket/v2"
@@ -41,9 +42,14 @@ func (c *Client) readPump() {
 		}
 
 		if mt == websocket.BinaryMessage {
+			decrypted, err := packet.Decrypt(message)
+			if err != nil {
+				log.Printf("Decryption Error: %v", err)
+				continue
+			}
 			c.hub.broadcast <- &BroadcastMessage{
 				sender: c,
-				data:   message,
+				data:   decrypted,
 			}
 		}
 	}
@@ -65,7 +71,13 @@ func (c *Client) writePump() {
 				return
 			}
 
-			err := c.conn.WriteMessage(websocket.BinaryMessage, message)
+			encrypted, err := packet.Encrypt(message)
+			if err != nil {
+				log.Printf("Encryption Error: %v", err)
+				continue
+			}
+
+			err = c.conn.WriteMessage(websocket.BinaryMessage, encrypted)
 			if err != nil {
 				return
 			}
