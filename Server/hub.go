@@ -78,10 +78,23 @@ func (h *Hub) itemSpawnerTicker() {
 			continue
 		}
 
+		var freeSpawners []uint32
+		for i := uint32(0); i < 5; i++ {
+			if !h.state.IsSpawnerOccupied(i) {
+				freeSpawners = append(freeSpawners, i)
+			}
+		}
+
+		if len(freeSpawners) == 0 {
+			continue
+		}
+
 		itemType := byte(rand.Intn(2))
 		itemID := h.state.GenerateItemId()
 
-		spawnerID := uint32(rand.Intn(5))
+		spawnerID := freeSpawners[rand.Intn(len(freeSpawners))]
+		h.state.RegisterSpawn(itemID, spawnerID)
+
 		spawnPkt := packet.SerializeSpawnItem(itemType, itemID, spawnerID)
 
 		h.broadcast <- &BroadcastMessage{

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c35x0d44i1dov"]
 
 [ext_resource type="Theme" uid="uid://bon60kncnflmp" path="res://Materials/ui_theme.tres" id="1_5wsvm"]
+[ext_resource type="Script" uid="uid://jhsv7ssagm5j" path="res://Scripts/UI/main_menu.gd" id="2_i2xx2"]
 
 [node name="MainMenu" type="Control" unique_id=323691590]
 layout_mode = 3
@@ -10,6 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_5wsvm")
+script = ExtResource("2_i2xx2")
 
 [node name="Label" type="Label" parent="." unique_id=1712531448]
 layout_mode = 0
@@ -22,15 +24,20 @@ text = "Bebis Io"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1942655212]
 layout_mode = 0
-offset_left = 176.0
-offset_top = 336.0
-offset_right = 362.0
-offset_bottom = 474.0
+offset_left = 112.0
+offset_top = 280.0
+offset_right = 612.0
+offset_bottom = 507.0
+theme_override_constants/separation = 16
 
-[node name="PlayBtn" type="Button" parent="VBoxContainer" unique_id=1895216449]
+[node name="NameEntry" type="LineEdit" parent="VBoxContainer" unique_id=259355619]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Play"
+placeholder_text = "Name..."
 
 [node name="SettingsBtn" type="Button" parent="VBoxContainer" unique_id=1734949366]
+visible = false
 layout_mode = 2
 text = "Settings"
+
+[connection signal="text_submitted" from="VBoxContainer/NameEntry" to="." method="_on_name_entry_text_submitted"]

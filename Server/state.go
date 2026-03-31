@@ -13,20 +13,37 @@ type Player struct {
 }
 
 type GameState struct {
-	mu           sync.RWMutex
-	players      map[uint32]*Player
-	takenCookies map[uint32]bool
-	takenMilks   map[uint32]bool
-	nextItemID   uint32
+	mu              sync.RWMutex
+	players         map[uint32]*Player
+	takenCookies    map[uint32]bool
+	takenMilks      map[uint32]bool
+	spawnerOccupied map[uint32]bool
+	itemSpawnerMap  map[uint32]uint32
+	nextItemID      uint32
 }
 
 func NewGameState() *GameState {
 	return &GameState{
-		players:      make(map[uint32]*Player),
-		takenCookies: make(map[uint32]bool),
-		takenMilks:   make(map[uint32]bool),
-		nextItemID:   1,
+		players:         make(map[uint32]*Player),
+		takenCookies:    make(map[uint32]bool),
+		takenMilks:      make(map[uint32]bool),
+		spawnerOccupied: make(map[uint32]bool),
+		itemSpawnerMap:  make(map[uint32]uint32),
+		nextItemID:      1,
 	}
+}
+
+func (g *GameState) IsSpawnerOccupied(id uint32) bool {
+	g.mu.RLock()
+	defer g.mu.RUnlock()
+	return g.spawnerOccupied[id]
+}
+
+func (g *GameState) RegisterSpawn(itemID uint32, spawnerID uint32) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	g.spawnerOccupied[spawnerID] = true
+	g.itemSpawnerMap[itemID] = spawnerID
 }
 
 func (g *GameState) GenerateItemId() uint32 {
@@ -77,6 +94,11 @@ func (g *GameState) CanTakeCookie(cookieID uint32) bool {
 		return false
 	}
 	g.takenCookies[cookieID] = true
+
+	if spawnerID, ok := g.itemSpawnerMap[cookieID]; ok {
+		g.spawnerOccupied[spawnerID] = false
+		delete(g.itemSpawnerMap, cookieID)
+	}
 	return true
 }
 
@@ -89,6 +111,11 @@ func (g *GameState) CanTakeAmmo(playerID, milkID, amount uint32) bool {
 	if p, ok := g.players[playerID]; ok {
 		p.Ammo += amount
 		g.takenMilks[milkID] = true
+
+		if spawnerID, ok := g.itemSpawnerMap[milkID]; ok {
+			g.spawnerOccupied[spawnerID] = false
+			delete(g.itemSpawnerMap, milkID)
+		}
 		return true
 	}
 	return false

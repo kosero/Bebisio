@@ -24,6 +24,14 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vfatu"]
+content_margin_left = 8.0
+bg_color = Color(0.19607843, 0.23137255, 0.25882354, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4plma"]
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -44,5 +52,7 @@ Button/styles/normal = SubResource("StyleBoxFlat_56aqh")
 Button/styles/pressed = SubResource("StyleBoxFlat_56aqh")
 Label/font_sizes/font_size = 32
 Label/fonts/font = ExtResource("1_omjdi")
+LineEdit/font_sizes/font_size = 32
+LineEdit/styles/normal = SubResource("StyleBoxFlat_vfatu")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_4plma")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_omjdi")

@@ -38,7 +38,7 @@ func SerializeGoodbye(clientID uint32) []byte {
 }
 
 func SerializeSpawnItem(itemType byte, itemID uint32, spawnerID uint32) []byte {
-	buf := make([]byte, 5)
+	buf := make([]byte, 10)
 	buf[0] = SPAWN_ITEM
 	buf[1] = itemType
 	binary.LittleEndian.PutUint32(buf[2:6], itemID)
