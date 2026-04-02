@@ -2,6 +2,8 @@ extends Node
 
 
 signal player_spawn(name: String, peer_id: int)
+signal player_goodbye(client_id: int, name: String)
+
 signal spawn_item(item_type: int, item_id: int, progress: float)
 
 
@@ -51,6 +53,7 @@ func _goodbye_packet_handle(data: PackedByteArray) -> void:
 	var player = _get_player_with_peer_id(p.client_id)
 	if player:
 		player.queue_free()
+		player_goodbye.emit(p.client_id, p.name)
 
 
 func _join_packet_handle(data: PackedByteArray) -> void:
@@ -80,11 +83,11 @@ func _position_packet_handle(data: PackedByteArray) -> void:
 
 func _take_cookie_packet_handle(data: PackedByteArray) -> void:
 	var p = TakeCookiePacket.deserialize(data)
-	
+
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
 		player.take_cookie()
-		
+
 	var cookie = _get_cookie_with_id(p.cookie_id)
 	if cookie:
 		cookie.queue_free()
@@ -102,7 +105,7 @@ func _take_ammo_packet_handle(data: PackedByteArray) -> void:
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
 		player.gun.take_ammo(p.ammo)
-		
+
 	var milk = _get_milk_with_id(p.item_id)
 	if milk:
 		milk.queue_free()

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://gox64oayxosf" path="res://Textures/cookie.png" id="1_6y8ig"]
 [ext_resource type="Script" uid="uid://co0qwoejb8s03" path="res://Scripts/World/cookie.gd" id="1_a5i50"]
+[ext_resource type="Material" uid="uid://0f0161bfkpwi" path="res://Materials/item_highlight.tres" id="3_1dujg"]
 [ext_resource type="Texture2D" uid="uid://bexfm0yi1r5qd" path="res://Materials/light_tex.tres" id="3_x8iv8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6y8ig"]
@@ -10,16 +11,17 @@ radius = 3.0
 [node name="Cookie" type="Area2D" unique_id=329422708 groups=["cookie"]]
 script = ExtResource("1_a5i50")
 
-[node name="Cookie" type="Sprite2D" parent="." unique_id=726540183]
-texture = ExtResource("1_6y8ig")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1371310357]
-shape = SubResource("CircleShape2D_6y8ig")
-
 [node name="PointLight2D" type="PointLight2D" parent="." unique_id=11284862]
 color = Color(1, 0.42745098, 0.30588236, 1)
 shadow_enabled = true
 shadow_item_cull_mask = 3
 texture = ExtResource("3_x8iv8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1371310357]
+shape = SubResource("CircleShape2D_6y8ig")
+
+[node name="Cookie" type="Sprite2D" parent="." unique_id=726540183]
+material = ExtResource("3_1dujg")
+texture = ExtResource("1_6y8ig")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -16,18 +16,34 @@ var position_send_timer: float = 0.0
 const POSITION_SEND_INTERVAL: float = 0.05
 
 @export_group("Movement")
-@export var ACCELERATION: float = 800.0
-@export var FRICTION: float = 1000.0
+@export var ACCELERATION: float = 2000.0
+@export var FRICTION: float = 2000.0
 @export var SPEED: float = 80.0
+
+var recoil: Vector2 = Vector2.ZERO
+
+@export var dash_curve: Curve
+@export var dash_speed: float = 300.0
+@export var dash_duration: float = 0.3
+@export var dash_cooldown: float = 2.0
+
+var is_dashing: bool = false
+var dash_timer: float = 0.0
+var dash_direction: Vector2 = Vector2.ZERO
+var dash_cooldown_timer: float = 0.0
 
 @export_group("Items")
 var cookie_counter: int = 0
-@onready var ham_sound: AudioStreamPlayer2D = %HamSound
 var health: int = 10
 
-@export var username: String = ""
+var username: String = ""
+
+@onready var ham_sound: AudioStreamPlayer2D = %HamSound
+@onready var ugh_sound: AudioStreamPlayer2D = %UghSound
+@onready var dash_sound: AudioStreamPlayer2D = %DashSound
 
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
+@onready var anim_play: AnimationPlayer = %AnimationPlayer
 @onready var gun: Sprite2D = %Gun
 @onready var username_label: Label = %Username
 @onready var canvas_modulate: CanvasModulate = %CanvasModulate
@@ -39,15 +55,18 @@ var health: int = 10
 func _ready() -> void:
 	target_position = global_position
 	username_label.text = username
-	
+	CursorManager.update_cursor("gun")
+
 	collision_layer = 2
 	collision_mask = 1
-	
+
 	camera.enabled = is_local_player
 	canvas_layer.visible = is_local_player
 	canvas_modulate.visible = is_local_player
 	if is_local_player:
 		audio_listener.make_current()
+	if anim.material:
+		anim.material = anim.material.duplicate()
 
 
 func _physics_process(delta: float) -> void:
@@ -62,6 +81,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _interpolate_remote_player(delta: float) -> void:
+	if is_dashing:
+		if not dash_sound.playing:
+			dash_sound.play()
+
 	global_position = global_position.lerp(target_position, interpolation_speed * delta)
 	var movement_delta = target_position - global_position
 	if movement_delta.length() > 0.1:
@@ -76,7 +99,6 @@ func _interpolate_remote_player(delta: float) -> void:
 func _send_position_to_server(delta: float) -> void:
 	if peer_id == -1:
 		return
-
 	position_send_timer += delta
 	if position_send_timer >= POSITION_SEND_INTERVAL:
 		if global_position.distance_to(last_sent_position) > 0.1 or true:
@@ -88,10 +110,40 @@ func _send_position_to_server(delta: float) -> void:
 
 func _movement_handle(delta: float) -> void:
 	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+
+	if dash_cooldown_timer > 0.0:
+		dash_cooldown_timer -= delta
+
+	if Input.is_action_just_pressed("dash") and not is_dashing and dash_cooldown_timer <= 0.0:
+		is_dashing = true
+		dash_timer = 0.0
+		dash_direction = direction
+		dash_cooldown_timer = dash_cooldown
+		if dash_direction == Vector2.ZERO:
+			match  current_face:
+				"right": dash_direction = Vector2.RIGHT
+				"left": dash_direction = Vector2.LEFT
+				"down": dash_direction = Vector2.DOWN
+				"up": dash_direction = Vector2.UP
+
+	if is_dashing:
+		var progress := dash_timer / dash_duration
+		var  curve_value := dash_curve.sample(progress)
+		velocity = dash_direction * dash_speed * curve_value
+		dash_timer += delta
+		if not dash_sound.playing:
+			dash_sound.play()
+		if dash_timer >= dash_duration:
+			is_dashing = false
+		return
+
 	if direction:
 		velocity = velocity.move_toward(direction * SPEED, ACCELERATION * delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
+
+	velocity += recoil
+	recoil = recoil.move_toward(Vector2.ZERO, 500 * delta)
 
 
 func _update_face() -> void:
@@ -115,8 +167,11 @@ func _animation_manager() -> void:
 	var base_name = "walk" if state == State.walk else "idle"
 	var full_anim_name = base_name + "_" + current_face
 
-	if anim.animation != full_anim_name:
-		anim.play(full_anim_name)
+	if not is_dashing:
+		if anim.animation != full_anim_name:
+			anim.play(full_anim_name)
+	else:
+		anim.play("dash")
 
 
 func take_cookie(amount: int = 1) -> void:
@@ -127,15 +182,14 @@ func take_cookie(amount: int = 1) -> void:
 
 
 func take_damage(amount = 1) -> void:
-	if not is_local_player:
-		return
 	health -= amount
+	ugh_sound.play()
 	health = clamp(health, 0, 10)
 	if anim.material:
 		anim.material.set_shader_parameter("hit_effect", 0.2)
 		var tween = create_tween()
 		tween.tween_property(anim.material, "shader_parameter/hit_effect", 0.0, 0.5)
-	if health <= 0:
+	if health <= 0 and is_local_player:
 		player_dead()
 
 
@@ -155,21 +209,21 @@ func respawn() -> void:
 	last_sent_position = global_position
 
 
-func camera_shake(duration: float = 0.5, intensity: float = 4.0) -> void:
+func camera_shake(duration: float = 0.5, intensity: float = 1.0) -> void:
 	if not is_local_player:
 		return
-	
+
 	var shake_tween = create_tween()
 	shake_tween.tween_method(
 		func(progress: float):
 			var current_intensity = intensity * (1.0 - progress)
-			
+
 			camera.offset = Vector2(
 				randf_range(-current_intensity, current_intensity),
 				randf_range(-current_intensity, current_intensity)
 			),
 		0.0,
 		1.0,
-		duration 
+		duration
 	)
 	shake_tween.finished.connect(func(): camera.offset = Vector2.ZERO)

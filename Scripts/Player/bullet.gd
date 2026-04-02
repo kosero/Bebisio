@@ -19,8 +19,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		if body.peer_id == shooter_id:
 			return
-		if body.is_local_player:
-			body.take_damage(3)
+		body.take_damage(3)
 		queue_free()
 	elif body.is_in_group("wall"):
 		queue_free()

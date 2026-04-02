@@ -51,10 +51,13 @@ func (h *Hub) Run() {
 		case client := <-h.unregister:
 			if _, ok := h.clients[client.id]; ok {
 				log.Printf("Client %d disconnected\n", client.id)
+
+				name := h.state.GetPlayerName(client.id)
+
 				h.state.RemovePlayer(client.id)
 				delete(h.clients, client.id)
 				close(client.send)
-				goodbyePkt := packet.SerializeGoodbye(client.id)
+				goodbyePkt := packet.SerializeGoodbye(client.id, name)
 				for id, c := range h.clients {
 					if id != client.id {
 						select {
@@ -168,12 +171,10 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 		}
 
 	case packet.TAKE_AMMO:
-		// Always give 12 ammo
 		peerID, milkID, _, ok := packet.ParseTakeAmmo(msg.data)
 		if ok && peerID == senderID && h.state.CanTakeAmmo(senderID, milkID, 0) {
 			isValid = true
 			log.Printf("Player %d took 12 ammo from Milk %d\n", senderID, milkID)
-			// Don't broadcast client's ammo amount, use 12 for everyone
 			msg.data = packet.SerializeTakeAmmo(peerID, milkID, 12)
 		} else {
 			log.Printf("Player %d failed to take Ammo from Milk %d. Rejected.\n", senderID, milkID)

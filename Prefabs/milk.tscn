@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cciha23yvd5y8" path="res://Scripts/World/milk.gd" id="1_axdg6"]
 [ext_resource type="Texture2D" uid="uid://dni5123fsstx1" path="res://Textures/milk.png" id="1_nemme"]
+[ext_resource type="Material" uid="uid://0f0161bfkpwi" path="res://Materials/item_highlight.tres" id="2_y1pka"]
 [ext_resource type="Texture2D" uid="uid://bexfm0yi1r5qd" path="res://Materials/light_tex.tres" id="3_i27n3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_axdg6"]
@@ -24,6 +25,7 @@ position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_axdg6")
 
 [node name="Milk" type="Sprite2D" parent="." unique_id=1819416035]
+material = ExtResource("2_y1pka")
 texture = ExtResource("1_nemme")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

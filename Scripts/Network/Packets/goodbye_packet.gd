@@ -1,21 +1,29 @@
 class_name GoodbyePacket extends Packet
 
 var client_id: int
+var name: String
 
 
-func _init(_client_id: int) -> void:
+func _init(_client_id: int, _name: String) -> void:
 	type = Packet.GOODBYE
 	client_id = _client_id
+	name = _name
 
 
 func serialize() -> PackedByteArray:
 	var buf = PackedByteArray()
-	buf.resize(5)
+	var name_bytes := name.to_utf8_buffer()
+	buf.resize(1 + 4 + 4 + name_bytes.size())
 	buf[0] = type
 	buf.encode_u32(1, client_id)
+	buf.encode_u32(5, name_bytes.size())
+	for i in name_bytes.size():
+		buf[ 9 + i] = name_bytes[i]
 	return buf
 
 
 static func deserialize(data: PackedByteArray) -> GoodbyePacket:
-	var _client_id = data.decode_u32(1)
-	return GoodbyePacket.new(_client_id)
+	var _client_id := data.decode_u32(1)
+	var _name_size := data.decode_u32(5)
+	var _name := data.slice(9, 9 + _name_size).get_string_from_utf8()
+	return GoodbyePacket.new(_client_id, _name)

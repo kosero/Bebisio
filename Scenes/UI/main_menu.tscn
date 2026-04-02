@@ -2,15 +2,6 @@
 
 [ext_resource type="Theme" uid="uid://bon60kncnflmp" path="res://Materials/ui_theme.tres" id="1_5wsvm"]
 [ext_resource type="Script" uid="uid://jhsv7ssagm5j" path="res://Scripts/UI/main_menu.gd" id="2_i2xx2"]
-[ext_resource type="Shader" uid="uid://c307p2np52t8a" path="res://Shaders/pixelated_radial_2d_clouds.gdshader" id="3_o14dv"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_u7lva"]
-shader = ExtResource("3_o14dv")
-shader_parameter/pixelation = Vector2(256, 256)
-shader_parameter/scroll_speed1 = Vector2(0.02, 0.007)
-shader_parameter/scroll_speed2 = Vector2(-0.015, -0.004)
-shader_parameter/center_pos = Vector2(0.5, 0)
-shader_parameter/position_impact = 0.75
 
 [node name="MainMenu" type="Control" unique_id=323691590]
 layout_mode = 3
@@ -21,15 +12,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_5wsvm")
 script = ExtResource("2_i2xx2")
-
-[node name="ColorRect" type="ColorRect" parent="." unique_id=2127218883]
-material = SubResource("ShaderMaterial_u7lva")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="Label" type="Label" parent="." unique_id=1712531448]
 layout_mode = 0
@@ -59,4 +41,6 @@ visible = false
 layout_mode = 2
 text = "Settings"
 
+[connection signal="mouse_entered" from="VBoxContainer/NameEntry" to="." method="_on_name_entry_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/NameEntry" to="." method="_on_name_entry_mouse_exited"]
 [connection signal="text_submitted" from="VBoxContainer/NameEntry" to="." method="_on_name_entry_text_submitted"]

@@ -7,6 +7,7 @@ extends Sprite2D
 
 @onready var bullet_sound: AudioStreamPlayer2D = %BulletSound
 
+
 func _input(event: InputEvent) -> void:
 	if not get_parent().is_local_player:
 		return
@@ -45,6 +46,7 @@ func shoot(shooter_id: int = -1) -> void:
 		if shooter_id == -1:
 			amount -= 1
 		get_parent().camera_shake()
+		get_parent().recoil += -transform.x * 35.0
 
 
 func take_ammo(ammo: int) -> void:

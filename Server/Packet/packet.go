@@ -32,10 +32,13 @@ func SerializeGWelcome(clientID uint32) []byte {
 	return buf
 }
 
-func SerializeGoodbye(clientID uint32) []byte {
-	buf := make([]byte, 5)
+func SerializeGoodbye(clientID uint32, name string) []byte {
+	nameBytes := []byte(name)
+	buf := make([]byte, 1+4+4+len(nameBytes))
 	buf[0] = GOODBYE
 	binary.LittleEndian.PutUint32(buf[1:5], clientID)
+	binary.LittleEndian.PutUint32(buf[5:9], uint32(len(nameBytes)))
+	copy(buf[9:], nameBytes)
 	return buf
 }
 

@@ -41,6 +41,15 @@ func NewGameState() *GameState {
 	}
 }
 
+func (g *GameState) GetPlayerName(id uint32) string {
+	g.mu.RLock()
+	defer g.mu.RUnlock()
+	if p, ok := g.players[id]; ok {
+		return p.Name
+	}
+	return ""
+}
+
 func (g *GameState) GetItemCount() int {
 	g.mu.RLock()
 	defer g.mu.RUnlock()

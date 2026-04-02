@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cygaudjqhyh3s"
-path="res://.godot/imported/gun_crosshair.svg-27ab968d26691ce1c10d1763ccfe8a2b.ctex"
+uid="uid://ob6quw1j1pho"
+path="res://.godot/imported/cursor_none.svg-a65cf2b326247e92769a000f6524cf9e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Textures/gun_crosshair.svg"
-dest_files=["res://.godot/imported/gun_crosshair.svg-27ab968d26691ce1c10d1763ccfe8a2b.ctex"]
+source_file="res://Textures/Cursor/cursor_none.svg"
+dest_files=["res://.godot/imported/cursor_none.svg-a65cf2b326247e92769a000f6524cf9e.ctex"]
 
 [params]
 
