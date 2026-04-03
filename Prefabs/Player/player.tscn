@@ -4,13 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://d1aey7n8bn6bn" path="res://Textures/manyak_bebis.png" id="1_y6xdh"]
 [ext_resource type="Texture2D" uid="uid://bexfm0yi1r5qd" path="res://Materials/light_tex.tres" id="2_08u7w"]
 [ext_resource type="Shader" uid="uid://dwy31d51qiiqn" path="res://Shaders/damage.gdshader" id="3_m62uw"]
-[ext_resource type="Theme" uid="uid://bon60kncnflmp" path="res://Materials/ui_theme.tres" id="3_y5hcb"]
-[ext_resource type="Texture2D" uid="uid://we5nyex4g767" path="res://Textures/gun.png" id="4_2nftw"]
-[ext_resource type="Script" uid="uid://d4l6e160h4igp" path="res://Scripts/Player/hud.gd" id="4_hck1p"]
-[ext_resource type="Script" uid="uid://cay7his34tk88" path="res://Scripts/Player/gun.gd" id="5_knrd4"]
-[ext_resource type="PackedScene" uid="uid://cnhoqlq275j4s" path="res://Prefabs/bullet.tscn" id="7_juxdh"]
-[ext_resource type="AudioStream" uid="uid://43kw4oejdqag" path="res://Sounds/Lazer.wav" id="8_4qbli"]
-[ext_resource type="Shader" uid="uid://ct65fw7wvkmk0" path="res://Shaders/mana.gdshader" id="10_3vpsw"]
+[ext_resource type="Script" uid="uid://cn5t7i4tedf0k" path="res://Scripts/Player/camera.gd" id="5_m62uw"]
+[ext_resource type="PackedScene" uid="uid://ckpo5c8p661lc" path="res://Prefabs/Player/hud.tscn" id="6_tt850"]
+[ext_resource type="PackedScene" uid="uid://cyt7ac4o6o1up" path="res://Prefabs/Weapons/gun.tscn" id="9_3vpsw"]
 [ext_resource type="AudioStream" uid="uid://bd5yohyakiat" path="res://Sounds/ham.mp3" id="10_kgmex"]
 [ext_resource type="AudioStream" uid="uid://cxb84hnrf76i2" path="res://Sounds/uh-roblox-death.wav" id="12_b30ri"]
 [ext_resource type="Shader" uid="uid://c2omm64hjtcpd" path="res://Shaders/lofi_retro.gdshader" id="14_b30ri"]
@@ -211,48 +207,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_q7l0e"]
-resource_local_to_scene = true
-shader = ExtResource("10_3vpsw")
-shader_parameter/freq_times_PI = 1.200000057
-shader_parameter/strength = 0.1
-shader_parameter/center = 0.50000002375
-shader_parameter/wave_speed = 1.30000006175
-shader_parameter/amp_osc_freq = 0.5
-shader_parameter/border_color = Color(0.36862746, 0.49411765, 0.54509807, 0.6313726)
-shader_parameter/border_thickness = 0.050000002375
-shader_parameter/bg_color = Color(0.14509805, 0.20784314, 0.23529412, 0.7058824)
-
-[sub_resource type="Gradient" id="Gradient_3vpsw"]
-offsets = PackedFloat32Array(0, 0.36466166, 1)
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_0fs2y"]
-gradient = SubResource("Gradient_3vpsw")
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0fs2y"]
-resource_local_to_scene = true
-shader = ExtResource("10_3vpsw")
-shader_parameter/freq_times_PI = 1.200000057
-shader_parameter/strength = 0.1
-shader_parameter/center = 0.50000002375
-shader_parameter/wave_speed = 1.30000006175
-shader_parameter/amp_osc_freq = 0.5
-shader_parameter/border_color = Color(0.36862746, 0.49411765, 0.54509807, 0.6313726)
-shader_parameter/border_thickness = 0.050000002375
-shader_parameter/bg_color = Color(0.14509805, 0.20784314, 0.23529412, 0.7058824)
-
-[sub_resource type="Gradient" id="Gradient_m62uw"]
-offsets = PackedFloat32Array(0, 0.36466166, 1)
-colors = PackedColorArray(0.37254903, 0.48235294, 0.3254902, 1, 0.37254903, 0.48235294, 0.3254902, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_wphcr"]
-gradient = SubResource("Gradient_m62uw")
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ms580"]
 shader = ExtResource("14_b30ri")
 shader_parameter/pixel_size = 1.0
@@ -273,43 +227,6 @@ corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
-
-[sub_resource type="Animation" id="Animation_b30ri"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("CanvasLayer/Hud/Messagebox:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_ms580"]
-resource_name = "transition"
-length = 3.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("CanvasLayer/Hud/Messagebox:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 3, 3.5),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_q7l0e"]
-_data = {
-&"RESET": SubResource("Animation_b30ri"),
-&"transition": SubResource("Animation_ms580")
-}
 
 [node name="Player" type="CharacterBody2D" unique_id=1933084700 groups=["player"]]
 z_index = 3
@@ -352,7 +269,7 @@ sprite_frames = SubResource("SpriteFrames_wphcr")
 animation = &"idle_down"
 frame_progress = 0.932497
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1755811810]
+[node name="Camera" type="Camera2D" parent="." unique_id=1755811810 node_paths=PackedStringArray("player")]
 unique_name_in_owner = true
 zoom = Vector2(4, 4)
 process_callback = 0
@@ -361,64 +278,15 @@ limit_top = 0
 limit_smoothed = true
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
-
-[node name="Gun" type="Sprite2D" parent="." unique_id=482038350]
-unique_name_in_owner = true
-position = Vector2(11.194206, 4.323165)
-rotation = 0.36855063
-texture = ExtResource("4_2nftw")
-script = ExtResource("5_knrd4")
-bullet = ExtResource("7_juxdh")
-
-[node name="BulletSound" type="AudioStreamPlayer2D" parent="Gun" unique_id=234638563]
-unique_name_in_owner = true
-stream = ExtResource("8_4qbli")
-volume_db = -15.0
-bus = &"sfx"
+script = ExtResource("5_m62uw")
+player = NodePath("..")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1087468527]
 unique_name_in_owner = true
 
-[node name="Hud" type="Control" parent="CanvasLayer" unique_id=1913746537]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("3_y5hcb")
-script = ExtResource("4_hck1p")
-
-[node name="Messagebox" type="RichTextLabel" parent="CanvasLayer/Hud" unique_id=1267767568]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 8.0
-offset_top = 16.0
-offset_right = 357.0
-offset_bottom = 226.0
-scroll_active = false
-scroll_following = true
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Hud" unique_id=208793411]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -132.0
-offset_bottom = 64.0
-grow_horizontal = 0
-
-[node name="BulletBar" type="TextureRect" parent="CanvasLayer/Hud/HBoxContainer" unique_id=1665890094]
-unique_name_in_owner = true
-material = SubResource("ShaderMaterial_q7l0e")
-layout_mode = 2
-texture = SubResource("GradientTexture2D_0fs2y")
-
-[node name="HealthBar" type="TextureRect" parent="CanvasLayer/Hud/HBoxContainer" unique_id=1205596473]
-unique_name_in_owner = true
-material = SubResource("ShaderMaterial_0fs2y")
-layout_mode = 2
-texture = SubResource("GradientTexture2D_wphcr")
+[node name="Hud" parent="CanvasLayer" unique_id=536264706 node_paths=PackedStringArray("health_progress", "player") instance=ExtResource("6_tt850")]
+health_progress = NodePath("../../Username/health_progress")
+player = NodePath("../..")
 
 [node name="lofi_retro" type="ColorRect" parent="CanvasLayer" unique_id=879460206]
 material = SubResource("ShaderMaterial_ms580")
@@ -427,6 +295,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Gun" parent="." unique_id=1548825605 node_paths=PackedStringArray("player") instance=ExtResource("9_3vpsw")]
+unique_name_in_owner = true
+player = NodePath("..")
 
 [node name="Username" type="Label" parent="." unique_id=2097224627]
 unique_name_in_owner = true
@@ -452,28 +324,26 @@ max_value = 10.0
 value = 10.0
 show_percentage = false
 
-[node name="AudioListener2D" type="AudioListener2D" parent="." unique_id=518212693]
+[node name="Audios" type="Node2D" parent="." unique_id=1297811487]
+
+[node name="AudioListener2D" type="AudioListener2D" parent="Audios" unique_id=518212693]
 unique_name_in_owner = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1281781124]
-unique_name_in_owner = true
-libraries/ = SubResource("AnimationLibrary_q7l0e")
-
-[node name="UghSound" type="AudioStreamPlayer2D" parent="." unique_id=990657522]
+[node name="UghSound" type="AudioStreamPlayer2D" parent="Audios" unique_id=990657522]
 unique_name_in_owner = true
 stream = ExtResource("12_b30ri")
 pitch_scale = 1.4
 max_distance = 200.0
 bus = &"sfx"
 
-[node name="HamSound" type="AudioStreamPlayer2D" parent="." unique_id=1145726403]
+[node name="HamSound" type="AudioStreamPlayer2D" parent="Audios" unique_id=1145726403]
 unique_name_in_owner = true
 stream = ExtResource("10_kgmex")
 volume_db = -15.0
 max_distance = 200.0
 bus = &"sfx"
 
-[node name="DashSound" type="AudioStreamPlayer2D" parent="." unique_id=910808748]
+[node name="DashSound" type="AudioStreamPlayer2D" parent="Audios" unique_id=910808748]
 unique_name_in_owner = true
 stream = ExtResource("15_ms580")
 volume_db = -10.0

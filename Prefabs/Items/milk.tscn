@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dy2of5yffw6o1"]
 
-[ext_resource type="Script" uid="uid://cciha23yvd5y8" path="res://Scripts/World/milk.gd" id="1_axdg6"]
+[ext_resource type="Script" uid="uid://cciha23yvd5y8" path="res://Scripts/Items/milk.gd" id="1_axdg6"]
 [ext_resource type="Texture2D" uid="uid://dni5123fsstx1" path="res://Textures/milk.png" id="1_nemme"]
 [ext_resource type="Material" uid="uid://0f0161bfkpwi" path="res://Materials/item_highlight.tres" id="2_y1pka"]
 [ext_resource type="Texture2D" uid="uid://bexfm0yi1r5qd" path="res://Materials/light_tex.tres" id="3_i27n3"]

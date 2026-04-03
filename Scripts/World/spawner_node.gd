@@ -25,5 +25,5 @@ func _on_spawn_item(item_type: int, item_id: int, progress: float) -> void:
 			instance.global_position = spawn_path.global_position + curve.sample_baked(progress * curve.get_baked_length())
 		else:
 			instance.global_position = global_position
-			
+
 		get_tree().current_scene.call_deferred("add_child", instance)

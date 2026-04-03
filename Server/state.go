@@ -165,7 +165,7 @@ func (g *GameState) CanTakeAmmo(playerID, milkID, _ uint32) bool {
 		return false
 	}
 	if p, ok := g.players[playerID]; ok {
-		p.Ammo += 12
+		p.Ammo += 24
 		g.takenMilks[milkID] = true
 
 		if _, ok := g.activeItems[milkID]; ok {

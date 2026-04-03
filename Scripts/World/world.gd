@@ -25,7 +25,7 @@ func _join_game() -> void:
 	var player_name = NetworkHandler.player_name
 	if player_name.is_empty():
 		player_name = _generate_random_name()
-		
+
 	var join := JoinPacket.new(player_name, NetworkHandler.client_id)
 	NetworkHandler.send_packet(join)
 

@@ -1,6 +1,7 @@
 extends Control
 
-@onready var health_progress: ProgressBar = %health_progress
+@export var health_progress: ProgressBar
+
 @onready var health_bar: TextureRect = %HealthBar
 var health_mat: ShaderMaterial
 
@@ -8,7 +9,9 @@ var health_mat: ShaderMaterial
 var bullet_mat: ShaderMaterial
 
 @onready var message_box: RichTextLabel = %Messagebox
-@onready var player: Node = get_parent().get_parent()
+@onready var anim: AnimationPlayer = %AnimationPlayer
+@export var player: CharacterBody2D
+
 
 func _ready() -> void:
 	if bullet_bar.material:
@@ -22,6 +25,8 @@ func _ready() -> void:
 
 	PacketRouter.player_spawn.connect(_on_player_spawn)
 	PacketRouter.player_goodbye.connect(_on_player_goodbye)
+	PacketRouter.player_dead.connect(_on_player_dead)
+	PacketRouter.player_respawn.connect(_on_player_respawn)
 
 
 func _process(_delta: float) -> void:
@@ -38,9 +43,19 @@ func _process(_delta: float) -> void:
 
 func _on_player_spawn(_name: String, _peer_id: int) -> void:
 	message_box.text += _name + " joined\n"
-	player.anim_play.play("transition")
+	anim.play("transition")
 
 
 func _on_player_goodbye(_client_id: int, _name: String) -> void:
 	message_box.text += _name + " left\n"
-	player.anim_play.play("transition")
+	anim.play("transition")
+
+
+func _on_player_dead(_name: String, _peer_id: int) -> void:
+	message_box.text += _name + " dead\n"
+	anim.play("transition")
+
+
+func _on_player_respawn(_name: String, _peer_id: int) -> void:
+	message_box.text += _name + " respawn\n"
+	anim.play("transition")

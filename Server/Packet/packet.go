@@ -13,6 +13,7 @@ const (
 	SHOOT       byte = 0x05
 	SPAWN_ITEM  byte = 0x06
 	RESPAWN     byte = 0x07
+	DEATH       byte = 0x08
 
 	WELCOME byte = 0x10
 	GOODBYE byte = 0x11
@@ -67,6 +68,15 @@ func ParseTakeCookie(data []byte) (peerID uint32, cookieID uint32, ok bool) {
 	return peerID, cookieID, true
 }
 
+func SerializeTakeCookie(peerID uint32, cookieID uint32, health uint32) []byte {
+	buf := make([]byte, 13)
+	buf[0] = TAKE_COOKIE
+	binary.LittleEndian.PutUint32(buf[1:5], peerID)
+	binary.LittleEndian.PutUint32(buf[5:9], cookieID)
+	binary.LittleEndian.PutUint32(buf[9:13], health)
+	return buf
+}
+
 func ParseTakeAmmo(data []byte) (peerID uint32, itemID uint32, ammo uint32, ok bool) {
 	if len(data) < 13 {
 		return 0, 0, 0, false
@@ -94,12 +104,50 @@ func ParseShoot(data []byte) (peerID uint32, ok bool) {
 	return peerID, true
 }
 
-func ParseRespawn(data []byte) (peerID uint32, ok bool) {
-	if len(data) < 5 {
-		return 0, false
+func ParseRespawn(data []byte) (peerID uint32, name string, ok bool) {
+	if len(data) < 10 {
+		return 0, "", false
 	}
 	peerID = binary.LittleEndian.Uint32(data[1:5])
-	return peerID, true
+	nameLen := binary.LittleEndian.Uint32(data[5:9])
+	if len(data) < int(9+nameLen) {
+		return 0, "", false
+	}
+	name = string(data[9 : 9+nameLen])
+	return peerID, name, true
+}
+
+func SerializeRespawn(peerID uint32, name string) []byte {
+	nameBytes := []byte(name)
+	buf := make([]byte, 1+4+4+len(nameBytes))
+	buf[0] = RESPAWN
+	binary.LittleEndian.PutUint32(buf[1:5], peerID)
+	binary.LittleEndian.PutUint32(buf[5:9], uint32(len(nameBytes)))
+	copy(buf[9:], nameBytes)
+	return buf
+}
+
+func ParseDeath(data []byte) (peerID uint32, name string, ok bool) {
+	if len(data) < 10 {
+		return 0, "", false
+	}
+	peerID = binary.LittleEndian.Uint32(data[1:5])
+	nameLen := binary.LittleEndian.Uint32(data[5:9])
+	if len(data) < int(9+nameLen) {
+		return 0, "", false
+	}
+	name = string(data[9 : 9+nameLen])
+	return peerID, name, true
+}
+
+func SerializeDeath(peerID uint32, name string) []byte {
+	nameBytes := []byte(name)
+	buf := make([]byte, 1+4+4+len(nameBytes))
+	buf[0] = DEATH
+	binary.LittleEndian.PutUint32(buf[1:5], peerID)
+	binary.LittleEndian.PutUint32(buf[5:9], uint32(len(nameBytes)))
+	copy(buf[9:], nameBytes)
+	return buf
 }
 
 func ParseJoin(data []byte) (peerID uint32, name string, ok bool) {

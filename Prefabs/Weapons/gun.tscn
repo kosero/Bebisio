@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://cyt7ac4o6o1up"]
+
+[ext_resource type="Script" uid="uid://bmw2ae6ijttjc" path="res://Scripts/Weapons/gun.gd" id="1_rjovg"]
+[ext_resource type="AudioStream" uid="uid://43kw4oejdqag" path="res://Sounds/Lazer.wav" id="2_qv3ea"]
+[ext_resource type="PackedScene" uid="uid://cnhoqlq275j4s" path="res://Prefabs/Weapons/bullet.tscn" id="2_ytxkc"]
+[ext_resource type="Texture2D" uid="uid://we5nyex4g767" path="res://Textures/gun.png" id="3_ytxkc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pugyo"]
+atlas = ExtResource("3_ytxkc")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2v2e1"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pugyo")
+}],
+"loop": true,
+"name": &"milk_gun",
+"speed": 5.0
+}]
+
+[node name="Gun" type="Node2D" unique_id=1548825605]
+script = ExtResource("1_rjovg")
+bullet = ExtResource("2_ytxkc")
+
+[node name="BulletSound" type="AudioStreamPlayer2D" parent="." unique_id=416924423]
+unique_name_in_owner = true
+stream = ExtResource("2_qv3ea")
+volume_db = -15.0
+bus = &"sfx"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=351715279]
+unique_name_in_owner = true
+sprite_frames = SubResource("SpriteFrames_2v2e1")
+animation = &"milk_gun"

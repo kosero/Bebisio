@@ -1,12 +1,12 @@
 [gd_scene format=4 uid="uid://dy3icl1f32yrj"]
 
-[ext_resource type="PackedScene" uid="uid://yysfcuio22fs" path="res://Prefabs/player.tscn" id="1_a02cp"]
+[ext_resource type="PackedScene" uid="uid://yysfcuio22fs" path="res://Prefabs/Player/player.tscn" id="1_a02cp"]
 [ext_resource type="Script" uid="uid://df6jyjmoh415x" path="res://Scripts/World/world.gd" id="1_fo5ed"]
 [ext_resource type="TileSet" uid="uid://ba4wpv81vehem" path="res://Materials/dungeon_sheet.tres" id="1_go701"]
 [ext_resource type="Script" uid="uid://cw5n2to08t05k" path="res://Scripts/Network/player_spawner.gd" id="2_5a7ea"]
-[ext_resource type="PackedScene" uid="uid://dy2of5yffw6o1" path="res://Prefabs/milk.tscn" id="3_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://dy2of5yffw6o1" path="res://Prefabs/Items/milk.tscn" id="3_5a7ea"]
 [ext_resource type="Script" uid="uid://c6x8yj15ylcr5" path="res://Scripts/World/spawner_node.gd" id="6_o06y3"]
-[ext_resource type="PackedScene" uid="uid://mmfs5dmwludk" path="res://Prefabs/cookie.tscn" id="7_k7acu"]
+[ext_resource type="PackedScene" uid="uid://mmfs5dmwludk" path="res://Prefabs/Items/cookie.tscn" id="7_k7acu"]
 
 [sub_resource type="Curve2D" id="Curve2D_o06y3"]
 _data = {

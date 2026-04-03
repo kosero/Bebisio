@@ -1,0 +1,130 @@
+[gd_scene format=3 uid="uid://ckpo5c8p661lc"]
+
+[ext_resource type="Theme" uid="uid://bon60kncnflmp" path="res://Materials/ui_theme.tres" id="1_h0b6q"]
+[ext_resource type="Script" uid="uid://d4l6e160h4igp" path="res://Scripts/Player/hud.gd" id="2_5qfru"]
+[ext_resource type="Shader" uid="uid://ct65fw7wvkmk0" path="res://Shaders/mana.gdshader" id="3_8xem7"]
+
+[sub_resource type="Animation" id="Animation_b30ri"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Messagebox:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ms580"]
+resource_name = "transition"
+length = 3.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Messagebox:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 3, 3.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_q7l0e"]
+_data = {
+&"RESET": SubResource("Animation_b30ri"),
+&"transition": SubResource("Animation_ms580")
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q7l0e"]
+resource_local_to_scene = true
+shader = ExtResource("3_8xem7")
+shader_parameter/freq_times_PI = 1.200000057
+shader_parameter/strength = 0.1
+shader_parameter/center = 0.50000002375
+shader_parameter/wave_speed = 1.30000006175
+shader_parameter/amp_osc_freq = 0.5
+shader_parameter/border_color = Color(0.36862746, 0.49411765, 0.54509807, 0.6313726)
+shader_parameter/border_thickness = 0.050000002375
+shader_parameter/bg_color = Color(0.14509805, 0.20784314, 0.23529412, 0.7058824)
+
+[sub_resource type="Gradient" id="Gradient_3vpsw"]
+offsets = PackedFloat32Array(0, 0.36466166, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0fs2y"]
+gradient = SubResource("Gradient_3vpsw")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0fs2y"]
+resource_local_to_scene = true
+shader = ExtResource("3_8xem7")
+shader_parameter/freq_times_PI = 1.200000057
+shader_parameter/strength = 0.1
+shader_parameter/center = 0.50000002375
+shader_parameter/wave_speed = 1.30000006175
+shader_parameter/amp_osc_freq = 0.5
+shader_parameter/border_color = Color(0.36862746, 0.49411765, 0.54509807, 0.6313726)
+shader_parameter/border_thickness = 0.050000002375
+shader_parameter/bg_color = Color(0.14509805, 0.20784314, 0.23529412, 0.7058824)
+
+[sub_resource type="Gradient" id="Gradient_m62uw"]
+offsets = PackedFloat32Array(0, 0.36466166, 1)
+colors = PackedColorArray(0.37254903, 0.48235294, 0.3254902, 1, 0.37254903, 0.48235294, 0.3254902, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wphcr"]
+gradient = SubResource("Gradient_m62uw")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="Hud" type="Control" unique_id=536264706]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_h0b6q")
+script = ExtResource("2_5qfru")
+
+[node name="Messagebox" type="RichTextLabel" parent="." unique_id=1080314353]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 8.0
+offset_top = 16.0
+offset_right = 357.0
+offset_bottom = 226.0
+scroll_active = false
+scroll_following = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1720032671]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_q7l0e")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2021962172]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -132.0
+offset_bottom = 64.0
+grow_horizontal = 0
+
+[node name="BulletBar" type="TextureRect" parent="HBoxContainer" unique_id=806998133]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_q7l0e")
+layout_mode = 2
+texture = SubResource("GradientTexture2D_0fs2y")
+
+[node name="HealthBar" type="TextureRect" parent="HBoxContainer" unique_id=1125429629]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_0fs2y")
+layout_mode = 2
+texture = SubResource("GradientTexture2D_wphcr")

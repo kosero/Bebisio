@@ -3,6 +3,8 @@ extends Node
 
 signal player_spawn(name: String, peer_id: int)
 signal player_goodbye(client_id: int, name: String)
+signal player_respawn(name: String, peer_id: int)
+signal player_dead(name: String, peer_id: int)
 
 signal spawn_item(item_type: int, item_id: int, progress: float)
 
@@ -40,6 +42,9 @@ func _on_packet_received(data: PackedByteArray) -> void:
 
 		Packet.RESPAWN:
 			_respawn_packet_handle(data)
+
+		Packet.DEATH:
+			_death_packet_handle(data)
 
 
 func _welcome_packet_handle(data: PackedByteArray) -> void:
@@ -86,7 +91,7 @@ func _take_cookie_packet_handle(data: PackedByteArray) -> void:
 
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
-		player.take_cookie()
+		player.take_cookie(p.amount)
 
 	var cookie = _get_cookie_with_id(p.cookie_id)
 	if cookie:
@@ -121,12 +126,19 @@ func _get_milk_with_id(id: int) -> Node:
 func _shoot_packet_handle(data: PackedByteArray) -> void:
 	var p = ShootPacket.deserialize(data)
 
-	if p.peer_id == NetworkHandler.client_id:
-		return
-
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
-		player.gun.shoot(p.peer_id)
+		# Her iki durumda da (yerel veya uzak) mermiyi düşürüyoruz
+		# Çünkü sunucu bu vuruşu onayladı (paket bize geri geldi)
+		if player.gun.amount > 0:
+			player.gun.amount -= 1
+
+		# if p.peer_id == NetworkHandler.client_id:
+		# 	return # Yerel oyuncu zaten vuruş sesini/animasyonunu shoot() içinde yaptı mı?
+		# Hayır, gun.gd içindeki shoot() mermiyi düşürmüyordu artık.
+
+		if p.peer_id != NetworkHandler.client_id:
+			player.gun.shoot(p.peer_id)
 
 
 func _respawn_packet_handle(data: PackedByteArray) -> void:
@@ -134,6 +146,15 @@ func _respawn_packet_handle(data: PackedByteArray) -> void:
 	var player = _get_player_with_peer_id(p.peer_id)
 	if player:
 		player.respawn()
+	player_respawn.emit(p.name, p.peer_id)
+
+func _death_packet_handle(data: PackedByteArray) -> void:
+	var p = DeathPacket.deserialize(data)
+	player_dead.emit(p.name, p.peer_id)
+	var player = _get_player_with_peer_id(p.peer_id)
+	if player:
+		# Maybe trigger visual death locally too, if you want.
+		pass
 
 
 func _get_player_with_peer_id(peer_id: int) -> Node:

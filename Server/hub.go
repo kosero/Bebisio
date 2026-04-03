@@ -166,6 +166,7 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 		if ok && peerID == senderID && h.state.CanTakeCookie(senderID, cookieID, 2) {
 			isValid = true
 			log.Printf("Player %d took Cookie %d and healed 2\n", senderID, cookieID)
+			msg.data = packet.SerializeTakeCookie(senderID, cookieID, 2)
 		} else {
 			log.Printf("Player %d failed to take Cookie %d. Rejected.\n", senderID, cookieID)
 		}
@@ -174,8 +175,8 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 		peerID, milkID, _, ok := packet.ParseTakeAmmo(msg.data)
 		if ok && peerID == senderID && h.state.CanTakeAmmo(senderID, milkID, 0) {
 			isValid = true
-			log.Printf("Player %d took 12 ammo from Milk %d\n", senderID, milkID)
-			msg.data = packet.SerializeTakeAmmo(peerID, milkID, 12)
+			log.Printf("Player %d took 24 ammo from Milk %d\n", senderID, milkID)
+			msg.data = packet.SerializeTakeAmmo(peerID, milkID, 24)
 		} else {
 			log.Printf("Player %d failed to take Ammo from Milk %d. Rejected.\n", senderID, milkID)
 		}
@@ -190,11 +191,22 @@ func (h *Hub) routePacket(msg *BroadcastMessage) {
 		}
 
 	case packet.RESPAWN:
-		peerID, ok := packet.ParseRespawn(msg.data)
+		peerID, _, ok := packet.ParseRespawn(msg.data) // Client might send empty name, we use server state
 		if ok && peerID == senderID {
 			h.state.ResetPlayer(senderID)
+			name := h.state.GetPlayerName(senderID)
 			isValid = true
-			log.Printf("Player %d respawned\n", senderID)
+			log.Printf("Player %d (%s) respawned\n", senderID, name)
+			msg.data = packet.SerializeRespawn(senderID, name)
+		}
+
+	case packet.DEATH:
+		peerID, _, ok := packet.ParseDeath(msg.data)
+		if ok && peerID == senderID {
+			name := h.state.GetPlayerName(senderID)
+			isValid = true
+			log.Printf("Player %d (%s) died\n", senderID, name)
+			msg.data = packet.SerializeDeath(senderID, name)
 		}
 
 	default:

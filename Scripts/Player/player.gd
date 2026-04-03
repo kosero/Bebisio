@@ -43,13 +43,12 @@ var username: String = ""
 @onready var dash_sound: AudioStreamPlayer2D = %DashSound
 
 @onready var anim: AnimatedSprite2D = %AnimatedSprite2D
-@onready var anim_play: AnimationPlayer = %AnimationPlayer
-@onready var gun: Sprite2D = %Gun
+@onready var gun: Node2D = %Gun
 @onready var username_label: Label = %Username
 @onready var canvas_modulate: CanvasModulate = %CanvasModulate
 @onready var audio_listener: AudioListener2D = %AudioListener2D
 @onready var canvas_layer: CanvasLayer = %CanvasLayer
-@onready var camera: Camera2D = %Camera2D
+@onready var camera: Camera2D = %Camera
 
 
 func _ready() -> void:
@@ -60,7 +59,6 @@ func _ready() -> void:
 	collision_layer = 2
 	collision_mask = 1
 
-	camera.enabled = is_local_player
 	canvas_layer.visible = is_local_player
 	canvas_modulate.visible = is_local_player
 	if is_local_player:
@@ -174,9 +172,8 @@ func _animation_manager() -> void:
 		anim.play("dash")
 
 
-func take_cookie(amount: int = 1) -> void:
-	cookie_counter += amount
-	health += 2
+func take_cookie(_amount: int = 2) -> void:
+	health += _amount
 	health = clamp(health, 0, 10)
 	ham_sound.play()
 
@@ -196,8 +193,9 @@ func take_damage(amount = 1) -> void:
 func player_dead() -> void:
 	if not is_local_player:
 		return
-	var p = RespawnPacket.new(peer_id)
+	var p = DeathPacket.new(peer_id, username)
 	NetworkHandler.send_packet(p)
+	send_respawn_packet()
 
 
 func respawn() -> void:
@@ -209,21 +207,6 @@ func respawn() -> void:
 	last_sent_position = global_position
 
 
-func camera_shake(duration: float = 0.5, intensity: float = 1.0) -> void:
-	if not is_local_player:
-		return
-
-	var shake_tween = create_tween()
-	shake_tween.tween_method(
-		func(progress: float):
-			var current_intensity = intensity * (1.0 - progress)
-
-			camera.offset = Vector2(
-				randf_range(-current_intensity, current_intensity),
-				randf_range(-current_intensity, current_intensity)
-			),
-		0.0,
-		1.0,
-		duration
-	)
-	shake_tween.finished.connect(func(): camera.offset = Vector2.ZERO)
+func send_respawn_packet() -> void:
+	var p = RespawnPacket.new(peer_id, username)
+	NetworkHandler.send_packet(p)

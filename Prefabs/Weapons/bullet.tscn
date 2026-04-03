@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://cnhoqlq275j4s"]
 
-[ext_resource type="Script" uid="uid://cdb5okciwjk1y" path="res://Scripts/Player/bullet.gd" id="1_0oen4"]
+[ext_resource type="Script" uid="uid://cdb5okciwjk1y" path="res://Scripts/Weapons/bullet.gd" id="1_0oen4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7dga7"]
-size = Vector2(2, 1)
+size = Vector2(4, 3)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0oen4"]
 particle_flag_disable_z = true
